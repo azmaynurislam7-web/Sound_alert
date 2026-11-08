@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_dark"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dynamic API &amp; Webhook Config"
+            android:textColor="@color/text_white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Backend Webhook URL:"
+            android:textColor="@color/text_gray" />
+
+        <EditText
+            android:id="@+id/etWebhookUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@color/card_dark"
+            android:hint="https://your-server.com/webhook"
+            android:padding="12dp"
+            android:textColor="@color/text_white"
+            android:textColorHint="@color/text_gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Razorpay Key ID:"
+            android:textColor="@color/text_gray" />
+
+        <EditText
+            android:id="@+id/etRazorpayKey"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@color/card_dark"
+            android:hint="rzp_live_xxxxxxxxxxx"
+            android:padding="12dp"
+            android:textColor="@color/text_white"
+            android:textColorHint="@color/text_gray" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Webhook Secret Key:"
+            android:textColor="@color/text_gray" />
+
+        <EditText
+            android:id="@+id/etWebhookSecret"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="@color/card_dark"
+            android:hint="Secret verification key"
+            android:padding="12dp"
+            android:textColor="@color/text_white"
+            android:textColorHint="@color/text_gray" />
+
+        <Button
+            android:id="@+id/btnSaveConfig"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="@color/primary_accent"
+            android:text="Save Configuration"
+            android:textColor="@color/bg_dark"
+            android:textStyle="bold" />
+    </LinearLayout>
+</ScrollView>
