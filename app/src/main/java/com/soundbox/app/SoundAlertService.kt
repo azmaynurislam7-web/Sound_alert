@@ -1,3 +1,17 @@
+package com.soundbox.app
+
+import android.app.Service
+import android.content.Context
+import android.content.Intent
+import android.os.IBinder
+import android.speech.tts.TextToSpeech
+import kotlinx.coroutines.*
+import okhttp3.Credentials
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import org.json.JSONObject
+import java.util.Locale
+
 class SoundAlertService : Service(), TextToSpeech.OnInitListener {
 
     private lateinit var tts: TextToSpeech
@@ -31,8 +45,9 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     }
 
     private fun checkRazorpayPayments() {
-        val keyId = ConfigManager.getKeyId(this)
-        val keySecret = ConfigManager.getKeySecret(this)
+        val prefs = getSharedPreferences("SoundboxPrefs", Context.MODE_PRIVATE)
+        val keyId = prefs.getString("razorpay_key", null)
+        val keySecret = prefs.getString("webhook_secret", null)
 
         if (keyId.isNullOrEmpty() || keySecret.isNullOrEmpty()) return
 
@@ -40,7 +55,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
         val client = OkHttpClient()
 
         val request = Request.Builder()
-            .url("https://api.razorpay.v1/payments?count=1")
+            .url("https://api.razorpay.com/v1/payments?count=1")
             .get()
             .header("Authorization", credentials)
             .build()
@@ -58,16 +73,11 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
                     val amountInPaise = latestPayment.getInt("amount")
                     val amountInRupees = amountInPaise / 100
 
-                    val lastSavedId = ConfigManager.getLastPaymentId(this)
+                    val lastSavedId = prefs.getString("last_payment_id", null)
 
-                    // Agar naya payment hai aur status captured/success hai
                     if (paymentId != lastSavedId && status == "captured") {
-                        ConfigManager.setLastPaymentId(this, paymentId)
-                        
-                        // Voice announcement
+                        prefs.edit().putString("last_payment_id", paymentId).apply()
                         speakOut("Rupees $amountInRupees received successfully")
-                        
-                        // Yahan aap local database ya history mein save kar sakte hain
                     }
                 }
             }
