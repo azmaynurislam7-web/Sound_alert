@@ -16,7 +16,6 @@ import com.google.firebase.ktx.Firebase
 
 class SoundAlertService : Service() {
     private val CHANNEL_ID = "SoundboxServiceChannel"
-    private var mediaPlayer: MediaPlayer? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -29,6 +28,7 @@ class SoundAlertService : Service() {
             .setContentTitle("Razorpay Soundbox Active")
             .setContentText("Background mein payment listen ho rahi hai...")
             .setSmallIcon(android.R.drawable.ic_menu_compass)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .build()
 
         startForeground(1, notification)
@@ -36,27 +36,22 @@ class SoundAlertService : Service() {
     }
 
     private fun startListeningToDatabase() {
-        // Firebase Realtime Database reference
-        // Yahan 'payments' node par listener lagaya gaya hai
         val database = Firebase.database
         val ref = database.getReference("payments")
 
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                // Jab bhi database mein koi naya data aayega ya change hoga yeh run hoga
-                // Aap yahan amount check karke sound play kar sakte hain
                 playAlertSound()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Error handle karne ke liye
+                // Error handle
             }
         })
     }
 
     private fun playAlertSound() {
         try {
-            // Phone ki default notification sound play karega (Aap chahein toh custom MP3 bhi laga sakte hain)
             val notificationUri = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
             val ringtone = android.media.RingtoneManager.getRingtone(applicationContext, notificationUri)
             ringtone.play()
@@ -71,7 +66,7 @@ class SoundAlertService : Service() {
         val serviceChannel = NotificationChannel(
             CHANNEL_ID,
             "Soundbox Foreground Service Channel",
-            NotificationManager.IMPORTANCE_LOW
+            NotificationManager.IMPORTANCE_HIGH
         )
         val manager = getSystemService(NotificationManager::class.java)
         manager?.createNotificationChannel(serviceChannel)
