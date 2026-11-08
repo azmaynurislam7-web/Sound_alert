@@ -31,7 +31,7 @@ class SettingsFragment : Fragment() {
                 putString("webhook_secret", etSecret.text.toString())
                 apply()
             }
-            Toast.makeText(requireContext(), "Configurations Successfully Updated!", Toast.Id.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Configurations Successfully Updated!", Toast.LENGTH_SHORT).show()
         }
 
         return view
