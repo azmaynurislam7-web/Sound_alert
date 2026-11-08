@@ -1,3 +1,7 @@
+package com.soundbox.app
+
+import android.content.Context
+
 object ConfigManager {
     private const val PREF_NAME = "SoundboxConfig"
     private const val KEY_ID = "key_id"
