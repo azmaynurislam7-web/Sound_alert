@@ -1,74 +1,96 @@
-package com.soundbox.app
+class SoundAlertService : Service(), TextToSpeech.OnInitListener {
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
-import android.content.Intent
-import android.media.MediaPlayer
-import android.os.IBinder
-import androidx.core.app.NotificationCompat
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-
-class SoundAlertService : Service() {
-    private val CHANNEL_ID = "SoundboxServiceChannel"
+    private lateinit var tts: TextToSpeech
+    private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var isRunning = false
 
     override fun onCreate() {
         super.onCreate()
-        createNotificationChannel()
-        startListeningToDatabase()
+        tts = TextToSpeech(this, this)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val notification: Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("Razorpay Soundbox Active")
-            .setContentText("Background mein payment listen ho rahi hai...")
-            .setSmallIcon(android.R.drawable.ic_menu_compass)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .build()
-
-        startForeground(1, notification)
+        if (!isRunning) {
+            isRunning = true
+            startPolling()
+        }
         return START_STICKY
     }
 
-    private fun startListeningToDatabase() {
-        val database = Firebase.database
-        val ref = database.getReference("payments")
-
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                playAlertSound()
+    private fun startPolling() {
+        serviceScope.launch {
+            while (isRunning) {
+                try {
+                    checkRazorpayPayments()
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                delay(5000) // Har 5 second mein check karega
             }
-
-            override fun onCancelled(error: DatabaseError) {
-                // Error handle
-            }
-        })
-    }
-
-    private fun playAlertSound() {
-        try {
-            val notificationUri = android.media.RingtoneManager.getDefaultUri(android.media.RingtoneManager.TYPE_NOTIFICATION)
-            val ringtone = android.media.RingtoneManager.getRingtone(applicationContext, notificationUri)
-            ringtone.play()
-        } catch (e: Exception) {
-            e.printStackTrace()
         }
     }
 
-    override fun onBind(intent: Intent?): IBinder? = null
+    private fun checkRazorpayPayments() {
+        val keyId = ConfigManager.getKeyId(this)
+        val keySecret = ConfigManager.getKeySecret(this)
 
-    private fun createNotificationChannel() {
-        val serviceChannel = NotificationChannel(
-            CHANNEL_ID,
-            "Soundbox Foreground Service Channel",
-            NotificationManager.IMPORTANCE_HIGH
-        )
-        val manager = getSystemService(NotificationManager::class.java)
-        manager?.createNotificationChannel(serviceChannel)
+        if (keyId.isNullOrEmpty() || keySecret.isNullOrEmpty()) return
+
+        val credentials = Credentials.basic(keyId, keySecret)
+        val client = OkHttpClient()
+
+        val request = Request.Builder()
+            .url("https://api.razorpay.v1/payments?count=1")
+            .get()
+            .header("Authorization", credentials)
+            .build()
+
+        client.newCall(request).execute().use { response ->
+            if (response.isSuccessful) {
+                val responseBody = response.body?.string()
+                val jsonObject = JSONObject(responseBody ?: "")
+                val items = jsonObject.getJSONArray("items")
+
+                if (items.length() > 0) {
+                    val latestPayment = items.getJSONObject(0)
+                    val paymentId = latestPayment.getString("id")
+                    val status = latestPayment.getString("status")
+                    val amountInPaise = latestPayment.getInt("amount")
+                    val amountInRupees = amountInPaise / 100
+
+                    val lastSavedId = ConfigManager.getLastPaymentId(this)
+
+                    // Agar naya payment hai aur status captured/success hai
+                    if (paymentId != lastSavedId && status == "captured") {
+                        ConfigManager.setLastPaymentId(this, paymentId)
+                        
+                        // Voice announcement
+                        speakOut("Rupees $amountInRupees received successfully")
+                        
+                        // Yahan aap local database ya history mein save kar sakte hain
+                    }
+                }
+            }
+        }
     }
+
+    private fun speakOut(text: String) {
+        tts.speak(text, TextToSpeech.QUEUE_ADD, null, null)
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            tts.language = Locale.ENGLISH
+        }
+    }
+
+    override fun onDestroy() {
+        isRunning = false
+        serviceScope.cancel()
+        tts.stop()
+        tts.shutdown()
+        super.onDestroy()
+    }
+
+    override fun onBind(intent: Intent?): IBinder? = null
 }
