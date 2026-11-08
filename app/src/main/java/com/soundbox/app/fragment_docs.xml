@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark"
+    android:background="@android:color/black"
     android:padding="16dp">
 
     <LinearLayout
@@ -13,9 +13,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Razorpay Webhook Setup Guide"
-            android:textColor="@color/text_white"
-            steps:textSize="20sp"
+            android:text="Razorpay Webhook Guide"
+            android:textColor="@android:color/white"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -23,11 +22,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="@color/card_dark"
-            android:lineSpacingExtra="4dp"
+            android:background="#1F1F1F"
             android:padding="16dp"
-            android:text="1. Apne Razorpay Dashboard par login karein.\n\n2. Settings > Webhooks section mein jayein.\n\n3. 'Add New Webhook' par click karein aur apna Server/App Webhook URL dalein.\n\n4. Active Events mein se 'payment.captured' event ko select karein.\n\n5. Secret key set karein aur wahi secret app ke Config section mein save karein.\n\nJab bhi payment aayegi, server aapke phone ko trigger dega aur sound bajega!"
-            android:textColor="@color/text_gray"
+            android:text="1. Razorpay Dashboard par jayein.\n2. Settings > Webhooks par click karein.\n3. Apna Server/App URL dalein aur event select karein."
+            android:textColor="@android:color/darker_gray"
             android:textSize="14sp" />
     </LinearLayout>
 </ScrollView>
