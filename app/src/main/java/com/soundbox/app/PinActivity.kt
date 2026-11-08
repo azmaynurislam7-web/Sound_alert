@@ -14,7 +14,7 @@ class PinActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pin)
 
-        val etPin = findViewById<EditText>(id = R.id.etPin)
+        val etPin = findViewById<EditText>(R.id.etPin)
         val btnUnlock = findViewById<Button>(R.id.btnUnlock)
 
         btnUnlock.setOnClickListener {
