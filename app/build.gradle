@@ -44,6 +44,9 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.6.2'
     implementation 'com.google.code.gson:gson:2.10.1'
 
+    // OkHttp Library for Razorpay API Polling
+    implementation 'com.squareup.okhttp3:okhttp:4.11.0'
+
     // Firebase Realtime Database Dependencies
     implementation platform('com.google.firebase:firebase-bom:32.8.1')
     implementation 'com.google.firebase:firebase-database-ktx'
