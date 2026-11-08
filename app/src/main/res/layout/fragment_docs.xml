@@ -2,8 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
-    android:padding="16dp">
+    android:background="#0A0F1D"
+    android:padding="20dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -13,19 +13,60 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Razorpay Webhook Guide"
+            android:text="Integration Guide"
             android:textColor="@android:color/white"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textStyle="bold" />
 
-        <TextView
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="#1E293B"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Step 1"
+                android:textColor="#34D399"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Log in to your Razorpay Dashboard and navigate to Settings > Webhooks."
+                android:textColor="#E2E8F0"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:background="#1F1F1F"
-            android:padding="16dp"
-            android:text="1. Razorpay Dashboard par jayein.\n2. Settings > Webhooks par click karein.\n3. Apna Server/App URL dalein aur event select karein."
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp" />
+            android:background="#1E293B"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Step 2"
+                android:textColor="#34D399"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Paste your backend listener URL and select the 'order.paid' event."
+                android:textColor="#E2E8F0"
+                android:textSize="14sp" />
+        </LinearLayout>
+
     </LinearLayout>
 </ScrollView>
