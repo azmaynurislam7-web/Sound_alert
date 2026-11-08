@@ -1,6 +1,8 @@
 package com.soundbox.app
 
 import android.content.Context
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,13 +27,27 @@ class SettingsFragment : Fragment() {
         etSecret.setText(prefs.getString("webhook_secret", ""))
 
         btnSave.setOnClickListener {
+            val keyId = etKeyId.text.toString().trim()
+            val keySecret = etSecret.text.toString().trim()
+
             prefs.edit().apply {
-                putString("webhook_url", etWebhook.text.toString())
-                putString("razorpay_key", etKeyId.text.toString())
-                putString("webhook_secret", etSecret.text.toString())
+                putString("webhook_url", etWebhook.text.toString().trim())
+                putString("razorpay_key", keyId)
+                putString("webhook_secret", keySecret)
                 apply()
             }
-            Toast.makeText(requireContext(), "Configurations Successfully Updated!", Toast.LENGTH_SHORT).show()
+
+            // Save hone ke turant baad background service start kar dein
+            if (keyId.isNotEmpty() && keySecret.isNotEmpty()) {
+                val serviceIntent = Intent(requireContext(), SoundAlertService::class.java)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    requireActivity().startForegroundService(serviceIntent)
+                } else {
+                    requireActivity().startService(serviceIntent)
+                }
+            }
+
+            Toast.makeText(requireContext(), "Configurations Updated & Service Started!", Toast.LENGTH_SHORT).show()
         }
 
         return view
