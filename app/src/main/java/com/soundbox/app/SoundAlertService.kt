@@ -119,10 +119,12 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     }
 
     override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            tts.language = Locale.ENGLISH
-        }
+    if (status == TextToSpeech.SUCCESS) {
+        tts.language = Locale.ENGLISH
+        tts.setSpeechRate(0.85f) // Yeh line speed ko thoda slow aur clear karegi
     }
+}
+
 
     override fun onDestroy() {
         isRunning = false
