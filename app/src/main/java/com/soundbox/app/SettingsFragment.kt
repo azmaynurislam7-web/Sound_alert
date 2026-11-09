@@ -12,8 +12,11 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
+import com.google.firebase.database.FirebaseDatabase
 
 class SettingsFragment : Fragment() {
+    private val databaseRef = FirebaseDatabase.getInstance().reference
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
 
@@ -40,24 +43,37 @@ class SettingsFragment : Fragment() {
         // Save switch states instantly on change
         switchPinLock.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("is_pin_enabled", isChecked).apply()
+            databaseRef.child("soundbox_settings").child("is_pin_enabled").setValue(isChecked)
             Toast.makeText(requireContext(), if (isChecked) "PIN Lock Enabled" else "PIN Lock Disabled", Toast.LENGTH_SHORT).show()
         }
 
         switchBiometric.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("is_biometric_enabled", isChecked).apply()
+            databaseRef.child("soundbox_settings").child("is_biometric_enabled").setValue(isChecked)
             Toast.makeText(requireContext(), if (isChecked) "Biometric Lock Enabled" else "Biometric Lock Disabled", Toast.LENGTH_SHORT).show()
         }
 
         btnSave.setOnClickListener {
+            val webhookUrl = etWebhook.text.toString().trim()
             val keyId = etKeyId.text.toString().trim()
             val keySecret = etSecret.text.toString().trim()
 
             prefs.edit().apply {
-                putString("webhook_url", etWebhook.text.toString().trim())
+                putString("webhook_url", webhookUrl)
                 putString("razorpay_key", keyId)
                 putString("webhook_secret", keySecret)
                 apply()
             }
+
+            // Sync configuration settings to Firebase Realtime Database
+            val settingsData = hashMapOf(
+                "webhookUrl" to webhookUrl,
+                "razorpayKey" to keyId,
+                "webhookSecret" to keySecret,
+                "isPinEnabled" to switchPinLock.isChecked,
+                "isBiometricEnabled" to switchBiometric.isChecked
+            )
+            databaseRef.child("soundbox_settings").setValue(settingsData)
 
             // Real backend service start/stop control based on credentials input
             if (keyId.isNotEmpty() && keySecret.isNotEmpty()) {
