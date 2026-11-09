@@ -44,6 +44,9 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.6.2'
     implementation 'com.google.code.gson:gson:2.10.1'
 
+    // Biometric Security Lock Dependency
+    implementation 'androidx.biometric:biometric:1.1.0'
+
     // OkHttp Library for Razorpay API Polling
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 
