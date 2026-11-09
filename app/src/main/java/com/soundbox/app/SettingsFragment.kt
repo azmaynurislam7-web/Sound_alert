@@ -59,7 +59,7 @@ class SettingsFragment : Fragment() {
                 apply()
             }
 
-            // Save hone ke turant baad background service start kar dein with ACTION_START
+            // Real backend service start/stop control based on credentials input
             if (keyId.isNotEmpty() && keySecret.isNotEmpty()) {
                 val serviceIntent = Intent(requireContext(), SoundAlertService::class.java).apply {
                     action = SoundAlertService.ACTION_START
@@ -69,15 +69,14 @@ class SettingsFragment : Fragment() {
                 } else {
                     requireActivity().startService(serviceIntent)
                 }
+                Toast.makeText(requireContext(), "Configurations Saved & Monitoring Started!", Toast.LENGTH_SHORT).show()
             } else {
-                // Agar credentials khali hain toh service stop karne ke liye intent bhej sakte hain
                 val stopIntent = Intent(requireContext(), SoundAlertService::class.java).apply {
                     action = SoundAlertService.ACTION_STOP
                 }
                 requireActivity().startService(stopIntent)
+                Toast.makeText(requireContext(), "Credentials empty! Monitoring Stopped.", Toast.LENGTH_SHORT).show()
             }
-
-            Toast.makeText(requireContext(), "Configurations Updated & Service Started!", Toast.LENGTH_SHORT).show()
         }
 
         return view
