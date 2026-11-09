@@ -1,6 +1,5 @@
 package com.soundbox.app
 
-import android.Manifest
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -43,7 +42,11 @@ class MainActivity : AppCompatActivity() {
                     loadFragment(DashboardFragment())
                     true
                 }
-                R.id.nav_config -> {
+                R.id.nav_voice_packs -> {
+                    loadFragment(VoicePacksFragment())
+                    true
+                }
+                R.id.nav_settings -> {
                     loadFragment(SettingsFragment())
                     true
                 }
