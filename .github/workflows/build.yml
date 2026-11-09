@@ -17,14 +17,14 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Make Gradle Wrapper Executable
-        run: chmod +x ./gradlew
-
       - name: Build Clean Debug APK
-        run: ./gradlew clean assembleDebug
+        run: |
+          cd Sound_alert
+          chmod +x ./gradlew
+          ./gradlew clean assembleDebug
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: Razorpay-Soundbox-APK
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: Sound_alert/app/build/outputs/apk/debug/app-debug.apk
