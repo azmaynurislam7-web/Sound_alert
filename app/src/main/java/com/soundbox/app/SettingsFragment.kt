@@ -44,7 +44,14 @@ class SettingsFragment : Fragment() {
         switchPinLock.setOnCheckedChangeListener { _, isChecked ->
             prefs.edit().putBoolean("is_pin_enabled", isChecked).apply()
             databaseRef.child("soundbox_settings").child("is_pin_enabled").setValue(isChecked)
-            Toast.makeText(requireContext(), if (isChecked) "PIN Lock Enabled" else "PIN Lock Disabled", Toast.LENGTH_SHORT).show()
+            
+            if (!isChecked) {
+                databaseRef.child("soundbox_settings").child("app_pin").removeValue()
+                prefs.edit().remove("app_pin").apply()
+                Toast.makeText(requireContext(), "PIN Lock Disabled & PIN Removed", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(requireContext(), "PIN Lock Enabled", Toast.LENGTH_SHORT).show()
+            }
         }
 
         switchBiometric.setOnCheckedChangeListener { _, isChecked ->
@@ -73,7 +80,7 @@ class SettingsFragment : Fragment() {
                 "isPinEnabled" to switchPinLock.isChecked,
                 "isBiometricEnabled" to switchBiometric.isChecked
             )
-            databaseRef.child("soundbox_settings").setValue(settingsData)
+            databaseRef.child("soundbox_settings").updateChildren(settingsData as Map<String, Any>)
 
             // Real backend service start/stop control based on credentials input
             if (keyId.isNotEmpty() && keySecret.isNotEmpty()) {
