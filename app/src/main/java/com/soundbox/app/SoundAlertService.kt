@@ -107,24 +107,56 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
 
                     if (paymentId != lastSavedId && status == "captured") {
                         prefs.edit().putString("last_payment_id", paymentId).apply()
-                        speakOut("Rupees $amountInRupees received successfully")
+                        speakOut(amountInRupees)
                     }
                 }
             }
         }
     }
 
-    private fun speakOut(text: String) {
-        tts.speak(text, TextToSpeech.QUEUE_ADD, null, null)
+    private fun speakOut(amount: Int) {
+        val prefs = getSharedPreferences("SoundboxPrefs", Context.MODE_PRIVATE)
+        val activeVoiceId = prefs.getString("active_voice", "paytm_en") ?: "paytm_en"
+
+        // Active voice pack ke hisab se dynamic message set hoga
+        val textToSpeak = when (activeVoiceId) {
+            "paytm_en" -> "Received $amount rupees successfully"
+            "paytm_hi" -> "Paytm par $amount rupaye prapt hue"
+            "paytm_bn" -> "Paytm a $amount taka paoya gelo"
+            "phonepe_en" -> "Received Rs. $amount successfully"
+            "phonepe_hi" -> "PhonePe par $amount rupaye mile"
+            "gpay_en" -> "Google Pay: Received $amount rupees"
+            "gpay_hi" -> "Google Pay par $amount rupaye prapt hue"
+            "classic_bell" -> "Payment of $amount rupees received"
+            "loud_alert" -> "Alert! $amount rupees credited"
+            "fast_upi" -> "UPI $amount rupees received"
+            "amazon_hi" -> "Amazon Pay se $amount rupaye prapt hue"
+            "bhim_hi" -> "BHIM app par $amount rupaye mile"
+            "mobikwik_en" -> "Mobikwik wallet credited with $amount rupees"
+            "fampay_en" -> "Got $amount rupees successfully"
+            "corporate_en" -> "Account credited with $amount rupees"
+            "royal_tone" -> "Successfully received $amount rupees"
+            "cyberpunk" -> "Transaction confirmed. $amount rupees received"
+            "soft_bell" -> "Received $amount rupees"
+            "dual_tone" -> "Payment alert: $amount rupees"
+            "mega_volume" -> "Alert! Received $amount rupees"
+            "gujarati_upi" -> "Paytm ma $amount rupiya malya"
+            "tamil_upi" -> "Paytm-il $amount roobai vanthathu"
+            "telugu_upi" -> "Paytm lo $amount rupayilu vachayi"
+            "marathi_upi" -> "Paytm madhye $amount rupaye prapt"
+            "punjabi_upi" -> "Paytm vich $amount paise aaye"
+            else -> "Paytm par $amount rupaye prapt hue"
+        }
+
+        tts.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null, null)
     }
 
     override fun onInit(status: Int) {
-    if (status == TextToSpeech.SUCCESS) {
-        tts.language = Locale.ENGLISH
-        tts.setSpeechRate(0.4f) // Yeh line speed ko thoda slow aur clear karegi
+        if (status == TextToSpeech.SUCCESS) {
+            tts.language = Locale("en", "IN")
+            tts.setSpeechRate(0.4f)
+        }
     }
-}
-
 
     override fun onDestroy() {
         isRunning = false
