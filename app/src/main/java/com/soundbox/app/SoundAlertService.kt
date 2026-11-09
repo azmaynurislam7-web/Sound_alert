@@ -21,7 +21,7 @@ import java.util.Locale
 class SoundAlertService : Service(), TextToSpeech.OnInitListener {
 
     private lateinit var tts: TextToSpeech
-    private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private var serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isRunning = false
     private val CHANNEL_ID = "SoundboxChannel"
 
@@ -48,6 +48,9 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
 
                 if (!isRunning) {
                     isRunning = true
+                    if (!serviceScope.isActive) {
+                        serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+                    }
                     startPolling()
                 }
             }
@@ -58,6 +61,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     private fun stopMonitoring() {
         isRunning = false
         serviceScope.cancel()
+        serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
         stopForeground(STOP_FOREGROUND_REMOVE)
         stopSelf()
     }
@@ -75,7 +79,6 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     }
 
     private fun createNotification(message: String): Notification {
-        // Notification par click karne par app open (redirect) hone ke liye Intent
         val notificationIntent = Intent(this, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
@@ -84,7 +87,6 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        // Notification ke andar Stop button click hone ke liye Intent
         val stopIntent = Intent(this, SoundAlertService::class.java).apply {
             action = ACTION_STOP
         }
@@ -97,8 +99,8 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
             .setContentTitle("Razorpay Soundbox")
             .setContentText(message)
             .setSmallIcon(android.R.drawable.ic_menu_compass)
-            .setContentIntent(pendingIntent) // Tap to open app
-            .addAction(android.R.drawable.ic_media_pause, "Stop", stopPendingIntent) // Stop button in notification
+            .setContentIntent(pendingIntent)
+            .addAction(android.R.drawable.ic_media_pause, "Stop", stopPendingIntent)
             .setOngoing(true)
             .build()
     }
@@ -160,7 +162,6 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
         val prefs = getSharedPreferences("SoundboxPrefs", Context.MODE_PRIVATE)
         val activeVoiceId = prefs.getString("active_voice", "paytm_en") ?: "paytm_en"
 
-        // Active voice pack ke hisab se dynamic locale/language set hoga
         val locale = when {
             activeVoiceId.contains("_hi") || activeVoiceId.contains("amazon") || activeVoiceId.contains("bhim") -> Locale("hi", "IN")
             activeVoiceId.contains("_bn") -> Locale("bn", "IN")
@@ -174,7 +175,6 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
         
         tts.language = locale
 
-        // Active voice pack ke hisab se dynamic message set hoga
         val textToSpeak = when (activeVoiceId) {
             "paytm_en" -> "Received $amount rupees successfully"
             "paytm_hi" -> "Paytm par $amount rupaye prapt hue"
