@@ -1,6 +1,7 @@
 package com.soundbox.app
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
@@ -8,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.PowerManager
 import android.provider.Settings
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -31,6 +33,7 @@ class MainActivity : AppCompatActivity() {
 
         checkManageExternalStorage()
         requestAllPermissions()
+        requestBatteryOptimizationExemption()
 
         val navChats = findViewById<LinearLayout>(R.id.navChats)
         val navVoices = findViewById<LinearLayout>(R.id.navVoices)
@@ -110,6 +113,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         requestPermissionLauncher.launch(permissionList.toTypedArray())
+    }
+
+    private fun requestBatteryOptimizationExemption() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
+            if (!powerManager.isIgnoringBatteryOptimizations(packageName)) {
+                val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+                    data = Uri.parse("package:$packageName")
+                }
+                try {
+                    startActivity(intent)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 
     private fun loadFragment(fragment: Fragment) {
