@@ -154,7 +154,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
             tts.language = Locale("en", "IN")
-            tts.setSpeechRate(0.4f)
+            tts.setSpeechRate(0.45f)
         }
     }
 
