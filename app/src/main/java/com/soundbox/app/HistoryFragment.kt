@@ -9,6 +9,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import org.json.JSONArray
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -18,6 +22,7 @@ class HistoryFragment : Fragment() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var tvEmpty: TextView
+    private val databaseRef = FirebaseDatabase.getInstance().reference
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_history, container, false)
@@ -32,31 +37,76 @@ class HistoryFragment : Fragment() {
 
     private fun loadHistory() {
         val prefs = requireContext().getSharedPreferences("SoundboxPrefs", Context.MODE_PRIVATE)
-        val historyJson = prefs.getString("payment_history", "[]")
-        val jsonArray = JSONArray(historyJson)
+        
+        // Real-time synchronization from Firebase Realtime Database with local fallback
+        databaseRef.child("soundbox_transactions").addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val transactionList = mutableListOf<TransactionItem>()
+                val jsonArray = JSONArray()
 
-        val transactionList = mutableListOf<TransactionItem>()
-        for (i in 0 until jsonArray.length()) {
-            val obj = jsonArray.getJSONObject(i)
-            transactionList.add(
-                TransactionItem(
-                    id = obj.getString("id"),
-                    amount = obj.getDouble("amount"),
-                    time = obj.getLong("time")
-                )
-            )
-        }
+                for (child in snapshot.children) {
+                    val id = child.child("paymentId").getValue(String::class.java) ?: child.key ?: ""
+                    val amount = child.child("amount").getValue(Double::class.java) ?: child.child("amount").getValue(Long::class.java)?.toDouble() ?: 0.0
+                    val time = child.child("timestamp").getValue(Long::class.java) ?: System.currentTimeMillis()
 
-        transactionList.reverse()
+                    transactionList.add(TransactionItem(id, amount, time))
 
-        if (transactionList.isEmpty()) {
-            tvEmpty.visibility = View.VISIBLE
-            recyclerView.visibility = View.GONE
-        } else {
-            tvEmpty.visibility = View.GONE
-            recyclerView.visibility = View.VISIBLE
-            recyclerView.adapter = HistoryAdapter(transactionList)
-        }
+                    val obj = org.json.JSONObject().apply {
+                        put("id", id)
+                        put("amount", amount)
+                        put("time", time)
+                    }
+                    jsonArray.put(obj)
+                }
+
+                // Update local storage cache with cloud data
+                prefs.edit().putString("payment_history", jsonArray.toString()).apply()
+
+                transactionList.reverse()
+
+                if (!isAdded) return
+
+                if (transactionList.isEmpty()) {
+                    tvEmpty.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                } else {
+                    tvEmpty.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                    recyclerView.adapter = HistoryAdapter(transactionList)
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Fallback to local storage if network fails
+                val historyJson = prefs.getString("payment_history", "[]")
+                val jsonArray = JSONArray(historyJson)
+
+                val transactionList = mutableListOf<TransactionItem>()
+                for (i in 0 until jsonArray.length()) {
+                    val obj = jsonArray.getJSONObject(i)
+                    transactionList.add(
+                        TransactionItem(
+                            id = obj.getString("id"),
+                            amount = obj.getDouble("amount"),
+                            time = obj.getLong("time")
+                        )
+                    )
+                }
+
+                transactionList.reverse()
+
+                if (!isAdded) return
+
+                if (transactionList.isEmpty()) {
+                    tvEmpty.visibility = View.VISIBLE
+                    recyclerView.visibility = View.GONE
+                } else {
+                    tvEmpty.visibility = View.GONE
+                    recyclerView.visibility = View.VISIBLE
+                    recyclerView.adapter = HistoryAdapter(transactionList)
+                }
+            }
+        })
     }
 
     data class TransactionItem(val id: String, val amount: Double, val time: Long)
