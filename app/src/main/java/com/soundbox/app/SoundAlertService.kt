@@ -13,7 +13,7 @@ import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
 import androidx.core.app.NotificationCompat
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.*
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
@@ -30,7 +30,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     private var serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isRunning = false
     private val CHANNEL_ID = "SoundboxChannel"
-    private val firestore = FirebaseFirestore.getInstance()
+    private val databaseRef = FirebaseDatabase.getInstance().reference
 
     companion object {
         const val ACTION_START = "com.soundbox.app.ACTION_START"
@@ -200,7 +200,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
                             .putString("latest_tx_details", "₹ $amountInRupees received successfully (ID: $paymentId)")
                             .apply()
 
-                        // Real-time saving to Firebase Firestore
+                        // Real-time saving to Firebase Realtime Database
                         val transactionData = hashMapOf(
                             "paymentId" to paymentId,
                             "amount" to amountInRupees,
@@ -208,9 +208,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
                             "timestamp" to timestamp
                         )
 
-                        firestore.collection("soundbox_transactions")
-                            .document(paymentId)
-                            .set(transactionData)
+                        databaseRef.child("soundbox_transactions").child(paymentId).setValue(transactionData)
 
                         val summaryData = hashMapOf(
                             "totalCollection" to newTotal,
@@ -218,9 +216,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
                             "lastUpdated" to timestamp
                         )
 
-                        firestore.collection("soundbox_summary")
-                            .document("stats")
-                            .set(summaryData)
+                        databaseRef.child("soundbox_summary").child("stats").setValue(summaryData)
 
                         maximizeVolumeAndRouteAudio()
                         speakOut(amountInRupees)
