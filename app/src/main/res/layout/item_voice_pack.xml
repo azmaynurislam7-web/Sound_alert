@@ -42,7 +42,6 @@
                 android:textSize="12sp" />
         </LinearLayout>
 
-        <!-- Preview Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPreview"
             style="?attr/materialButtonOutlinedStyle"
@@ -53,7 +52,6 @@
             android:textColor="#60A5FA"
             app:strokeColor="#60A5FA" />
 
-        <!-- Select/Active Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSelect"
             android:layout_width="wrap_content"
