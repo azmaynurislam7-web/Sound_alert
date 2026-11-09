@@ -47,7 +47,7 @@ class HistoryFragment : Fragment() {
             )
         }
 
-        transactionList.reverse() // Show latest first
+        transactionList.reverse()
 
         if (transactionList.isEmpty()) {
             tvEmpty.visibility = View.VISIBLE
@@ -63,9 +63,9 @@ class HistoryFragment : Fragment() {
 
     class HistoryAdapter(private val items: List<TransactionItem>) : RecyclerView.Adapter<HistoryAdapter.ViewHolder>() {
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-            val tvAmount: TextView = view.findViewById(R.id.tvItemAmount)
-            val tvId: TextView = view.findViewById(R.id.tvItemId)
-            val tvTime: TextView = view.findViewById(R.id.tvItemTime)
+            val tvItemAmount: TextView = view.findViewById(R.id.tvItemAmount)
+            val tvItemId: TextView = view.findViewById(R.id.tvItemId)
+            val tvItemTime: TextView = view.findViewById(R.id.tvItemTime)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -75,8 +75,9 @@ class HistoryFragment : Fragment() {
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val item = items[position]
-            holder.tvAmount.text = "₹ %.2f".format(item.amount)
-            holder.tvId.text = "ID: ${item.id}"
+            holder.tvItemAmount.text = "₹ %.2f".format(item.amount)
+            holder.tvItemId.text = "ID: ${item.id}"
+            
             val sdf = SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault())
             holder.tvItemTime.text = sdf.format(Date(item.time))
         }
