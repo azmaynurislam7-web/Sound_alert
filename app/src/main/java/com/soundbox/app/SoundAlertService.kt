@@ -34,6 +34,8 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
 
     private var lastLowBatteryAlertTime: Long = 0
     private var lastNetworkAlertTime: Long = 0
+    private var wasPreviouslyOffline = false
+    private var isFirstConnectionCheck = true
 
     companion object {
         const val ACTION_START = "com.soundbox.app.ACTION_START"
@@ -133,17 +135,34 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
 
     private fun checkDeviceHealthAndConnectivity() {
         val currentTime = System.currentTimeMillis()
-        
-        // 1. Check Internet Connection
-        if (!isInternetAvailable()) {
-            if (currentTime - lastNetworkAlertTime > 300000) { // 5 minutes interval
-                lastNetworkAlertTime = currentTime
-                speakCustomAlert("Warning! Internet connection lost. Please check your network.")
+        val isOnline = isInternetAvailable()
+
+        if (isFirstConnectionCheck) {
+            isFirstConnectionCheck = false
+            wasPreviouslyOffline = !isOnline
+        } else {
+            if (isOnline) {
+                if (wasPreviouslyOffline) {
+                    wasPreviouslyOffline = false
+                    speakCustomAlert("Internet connection restored successfully.")
+                }
+            } else {
+                if (!wasPreviouslyOffline) {
+                    wasPreviouslyOffline = true
+                    speakCustomAlert("Warning! Internet connection lost. Please check your network.")
+                    lastNetworkAlertTime = currentTime
+                } else {
+                    // Repeat alert every 5 minutes if connection remains lost
+                    if (currentTime - lastNetworkAlertTime > 300000) {
+                        lastNetworkAlertTime = currentTime
+                        speakCustomAlert("Warning! Internet connection lost. Please check your network.")
+                    }
+                }
+                return
             }
-            return
         }
 
-        // 2. Check Battery Percentage (< 15%)
+        // Check Battery Percentage (< 15%)
         val batteryManager = getSystemService(Context.BATTERY_SERVICE) as android.os.BatteryManager
         val batteryLevel = batteryManager.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CAPACITY)
 
@@ -171,7 +190,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
         maximizeVolumeAndRouteAudio()
         tts.language = Locale("en", "IN")
         val audioAttributes = AudioAttributes.Builder()
-            .setUsage(AudioAttributes.USAGE_ALARM)
+            .setUsage(AudioAttributes.USAGE_MEDIA)
             .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
             .build()
         tts.setAudioAttributes(audioAttributes)
