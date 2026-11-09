@@ -11,10 +11,12 @@ import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
 import androidx.core.app.NotificationCompat
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.*
 import okhttp3.Credentials
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import org.json.JSONArray
 import org.json.JSONObject
 import java.util.Locale
 
@@ -24,6 +26,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     private var serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isRunning = false
     private val CHANNEL_ID = "SoundboxChannel"
+    private val firestore = FirebaseFirestore.getInstance()
 
     companion object {
         const val ACTION_START = "com.soundbox.app.ACTION_START"
@@ -151,6 +154,52 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
 
                     if (paymentId != lastSavedId && status == "captured") {
                         prefs.edit().putString("last_payment_id", paymentId).apply()
+
+                        // Real-time calculation and saving to Local SharedPreferences
+                        val currentTotal = prefs.getFloat("total_collection", 0f)
+                        val newTotal = currentTotal + amountInRupees
+                        val currentCount = prefs.getInt("payment_count", 0) + 1
+
+                        val historyJson = prefs.getString("payment_history", "[]")
+                        val jsonArray = JSONArray(historyJson)
+                        val timestamp = System.currentTimeMillis()
+                        
+                        val newTx = JSONObject().apply {
+                            put("id", paymentId)
+                            put("amount", amountInRupees)
+                            put("time", timestamp)
+                        }
+                        jsonArray.put(newTx)
+
+                        prefs.edit()
+                            .putFloat("total_collection", newTotal)
+                            .putInt("payment_count", currentCount)
+                            .putString("payment_history", jsonArray.toString())
+                            .putString("latest_tx_details", "₹ $amountInRupees received successfully (ID: $paymentId)")
+                            .apply()
+
+                        // Real-time saving to Firebase Firestore
+                        val transactionData = hashMapOf(
+                            "paymentId" to paymentId,
+                            "amount" to amountInRupees,
+                            "status" to status,
+                            "timestamp" to timestamp
+                        )
+
+                        firestore.collection("soundbox_transactions")
+                            .document(paymentId)
+                            .set(transactionData)
+
+                        val summaryData = hashMapOf(
+                            "totalCollection" to newTotal,
+                            "paymentCount" to currentCount,
+                            "lastUpdated" to timestamp
+                        )
+
+                        firestore.collection("soundbox_summary")
+                            .document("stats")
+                            .set(summaryData)
+
                         speakOut(amountInRupees)
                     }
                 }
