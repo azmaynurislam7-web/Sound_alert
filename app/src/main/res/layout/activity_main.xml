@@ -35,15 +35,15 @@
             android:orientation="vertical"
             android:paddingVertical="6dp">
 
-            <TextView
+            <ImageView
                 android:id="@+id/iconChats"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="\uf086"
-                android:textSize="20sp"
-                android:textColor="#34D399"/>
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_send"
+                app:tint="#34D399" />
 
             <TextView
+                android:id="@+id/textChats"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Chats"
@@ -61,15 +61,15 @@
             android:orientation="vertical"
             android:paddingVertical="6dp">
 
-            <TextView
+            <ImageView
                 android:id="@+id/iconVoices"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="\uf001"
-                android:textSize="20sp"
-                android:textColor="#9CA3AF"/>
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_btn_speak_now"
+                app:tint="#9CA3AF" />
 
             <TextView
+                android:id="@+id/textVoices"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Voices"
@@ -87,15 +87,15 @@
             android:orientation="vertical"
             android:paddingVertical="6dp">
 
-            <TextView
+            <ImageView
                 android:id="@+id/iconSettings"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="\uf013"
-                android:textSize="20sp"
-                android:textColor="#9CA3AF"/>
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_manage"
+                app:tint="#9CA3AF" />
 
             <TextView
+                android:id="@+id/textSettings"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Settings"
