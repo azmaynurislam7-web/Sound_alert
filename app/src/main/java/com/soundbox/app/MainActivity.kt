@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         checkManageExternalStorage()
         requestAllPermissions()
 
-        // Initialize Font Awesome for custom Telegram-style nav bar
+        // Initialize Font Awesome for custom Telegram-style nav bar icons
         val typeface = try {
             Typeface.createFromAsset(assets, "fonts/fa-solid-900.ttf")
         } catch (e: Exception) {
