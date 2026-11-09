@@ -24,15 +24,11 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Full Storage Access (Manage External Storage) check for Android 11+
         checkManageExternalStorage()
-
-        // App open hote hi saari permissions ek sath maangne ke liye
         requestAllPermissions()
 
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottomNav)
 
-        // Load Default Fragment
         if (savedInstanceState == null) {
             loadFragment(DashboardFragment())
         }
@@ -82,7 +78,6 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.RECORD_AUDIO
         )
 
-        // Android version ke hisab se notifications aur storage permissions add karna
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             permissionList.add(Manifest.permission.POST_NOTIFICATIONS)
             permissionList.add(Manifest.permission.READ_MEDIA_IMAGES)
