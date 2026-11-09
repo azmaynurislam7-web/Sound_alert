@@ -2,18 +2,20 @@ package com.soundbox.app
 
 import android.Manifest
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
-import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.ImageViewCompat
 import androidx.fragment.app.Fragment
 
 class MainActivity : AppCompatActivity() {
@@ -29,23 +31,6 @@ class MainActivity : AppCompatActivity() {
 
         checkManageExternalStorage()
         requestAllPermissions()
-
-        // Initialize Font Awesome for custom Telegram-style nav bar icons
-        val typeface = try {
-            Typeface.createFromAsset(assets, "fonts/fa-solid-900.ttf")
-        } catch (e: Exception) {
-            null
-        }
-
-        val iconChats = findViewById<TextView>(R.id.iconChats)
-        val iconVoices = findViewById<TextView>(R.id.iconVoices)
-        val iconSettings = findViewById<TextView>(R.id.iconSettings)
-
-        if (typeface != null) {
-            iconChats.typeface = typeface
-            iconVoices.typeface = typeface
-            iconSettings.typeface = typeface
-        }
 
         val navChats = findViewById<LinearLayout>(R.id.navChats)
         val navVoices = findViewById<LinearLayout>(R.id.navVoices)
@@ -73,16 +58,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateNavSelection(index: Int) {
-        val iconChats = findViewById<TextView>(R.id.iconChats)
-        val iconVoices = findViewById<TextView>(R.id.iconVoices)
-        val iconSettings = findViewById<TextView>(R.id.iconSettings)
+        val iconChats = findViewById<ImageView>(R.id.iconChats)
+        val iconVoices = findViewById<ImageView>(R.id.iconVoices)
+        val iconSettings = findViewById<ImageView>(R.id.iconSettings)
+
+        val textChats = findViewById<TextView>(R.id.textChats)
+        val textVoices = findViewById<TextView>(R.id.textVoices)
+        val textSettings = findViewById<TextView>(R.id.textSettings)
 
         val activeColor = Color.parseColor("#34D399")
         val inactiveColor = Color.parseColor("#9CA3AF")
 
-        iconChats.setTextColor(if (index == 0) activeColor else inactiveColor)
-        iconVoices.setTextColor(if (index == 1) activeColor else inactiveColor)
-        iconSettings.setTextColor(if (index == 2) activeColor else inactiveColor)
+        ImageViewCompat.setImageTintList(iconChats, ColorStateList.valueOf(if (index == 0) activeColor else inactiveColor))
+        textChats.setTextColor(if (index == 0) activeColor else inactiveColor)
+
+        ImageViewCompat.setImageTintList(iconVoices, ColorStateList.valueOf(if (index == 1) activeColor else inactiveColor))
+        textVoices.setTextColor(if (index == 1) activeColor else inactiveColor)
+
+        ImageViewCompat.setImageTintList(iconSettings, ColorStateList.valueOf(if (index == 2) activeColor else inactiveColor))
+        textSettings.setTextColor(if (index == 2) activeColor else inactiveColor)
     }
 
     private fun checkManageExternalStorage() {
