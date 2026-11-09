@@ -152,6 +152,22 @@
                     android:textColor="@android:color/white"
                     android:textSize="15sp"
                     android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="14dp"
+                    android:background="#334155" />
+
+                <!-- Monitoring Start/Stop Toggle Switch -->
+                <androidx.appcompat.widget.SwitchCompat
+                    android:id="@+id/switchMonitoring"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Soundbox Live Monitoring"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp" />
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
