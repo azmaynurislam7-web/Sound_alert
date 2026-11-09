@@ -32,6 +32,9 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     private val CHANNEL_ID = "SoundboxChannel"
     private val databaseRef = FirebaseDatabase.getInstance().reference
 
+    private var lastLowBatteryAlertTime: Long = 0
+    private var lastNetworkAlertTime: Long = 0
+
     companion object {
         const val ACTION_START = "com.soundbox.app.ACTION_START"
         const val ACTION_STOP = "com.soundbox.app.ACTION_STOP"
@@ -118,6 +121,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
             while (isRunning) {
                 try {
                     checkAndResetDailyCollection()
+                    checkDeviceHealthAndConnectivity()
                     checkRazorpayPayments()
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -125,6 +129,53 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
                 delay(5000)
             }
         }
+    }
+
+    private fun checkDeviceHealthAndConnectivity() {
+        val currentTime = System.currentTimeMillis()
+        
+        // 1. Check Internet Connection
+        if (!isInternetAvailable()) {
+            if (currentTime - lastNetworkAlertTime > 300000) { // 5 minutes interval
+                lastNetworkAlertTime = currentTime
+                speakCustomAlert("Warning! Internet connection lost. Please check your network.")
+            }
+            return
+        }
+
+        // 2. Check Battery Percentage (< 15%)
+        val batteryManager = getSystemService(Context.BATTERY_SERVICE) as android.os.BatteryManager
+        val batteryLevel = batteryManager.getIntProperty(android.os.BatteryManager.BATTERY_PROPERTY_CAPACITY)
+
+        if (batteryLevel <= 15) {
+            if (currentTime - lastLowBatteryAlertTime > 600000) { // 10 minutes interval
+                lastLowBatteryAlertTime = currentTime
+                speakCustomAlert("Warning! Battery is low, only $batteryLevel percent remaining. Please connect charger.")
+            }
+        }
+    }
+
+    private fun isInternetAvailable(): Boolean {
+        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as android.net.ConnectivityManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+            return capabilities.hasCapability(android.net.NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        } else {
+            val activeNetworkInfo = connectivityManager.activeNetworkInfo
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected
+        }
+    }
+
+    private fun speakCustomAlert(message: String) {
+        maximizeVolumeAndRouteAudio()
+        tts.language = Locale("en", "IN")
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_ALARM)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+            .build()
+        tts.setAudioAttributes(audioAttributes)
+        tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, null)
     }
 
     private fun checkAndResetDailyCollection() {
