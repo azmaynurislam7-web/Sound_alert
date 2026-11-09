@@ -7,6 +7,8 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.media.AudioAttributes
+import android.media.AudioManager
 import android.os.Build
 import android.os.IBinder
 import android.speech.tts.TextToSpeech
@@ -18,11 +20,13 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
+import java.util.Calendar
 import java.util.Locale
 
 class SoundAlertService : Service(), TextToSpeech.OnInitListener {
 
     private lateinit var tts: TextToSpeech
+    private lateinit var audioManager: AudioManager
     private var serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
     private var isRunning = false
     private val CHANNEL_ID = "SoundboxChannel"
@@ -35,6 +39,7 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
 
     override fun onCreate() {
         super.onCreate()
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         tts = TextToSpeech(this, this)
         createNotificationChannel()
     }
@@ -112,12 +117,29 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
         serviceScope.launch {
             while (isRunning) {
                 try {
+                    checkAndResetDailyCollection()
                     checkRazorpayPayments()
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
                 delay(5000)
             }
+        }
+    }
+
+    private fun checkAndResetDailyCollection() {
+        val prefs = getSharedPreferences("SoundboxPrefs", Context.MODE_PRIVATE)
+        val lastSavedDay = prefs.getInt("last_saved_day", -1)
+        val currentDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
+
+        if (lastSavedDay != -1 && lastSavedDay != currentDay) {
+            prefs.edit()
+                .putFloat("total_collection", 0f)
+                .putInt("payment_count", 0)
+                .putInt("last_saved_day", currentDay)
+                .apply()
+        } else if (lastSavedDay == -1) {
+            prefs.edit().putInt("last_saved_day", currentDay).apply()
         }
     }
 
@@ -200,11 +222,17 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
                             .document("stats")
                             .set(summaryData)
 
+                        maximizeVolumeAndRouteAudio()
                         speakOut(amountInRupees)
                     }
                 }
             }
         }
+    }
+
+    private fun maximizeVolumeAndRouteAudio() {
+        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, 0)
     }
 
     private fun speakOut(amount: Int) {
@@ -252,6 +280,12 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
             "punjabi_upi" -> "Paytm vich $amount paise aaye"
             else -> "Paytm par $amount rupaye prapt hue"
         }
+
+        val audioAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_MEDIA)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SPEECH)
+            .build()
+        tts.setAudioAttributes(audioAttributes)
 
         tts.speak(textToSpeak, TextToSpeech.QUEUE_ADD, null, null)
     }
