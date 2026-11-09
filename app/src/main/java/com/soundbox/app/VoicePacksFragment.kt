@@ -1,7 +1,6 @@
 package com.soundbox.app
 
 import android.content.Context
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +32,6 @@ class VoicePacksFragment : Fragment() {
 
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
         recyclerView.adapter = VoiceAdapter(voiceList) { voice ->
-            // Save active voice in SharedPreferences
             val prefs = requireActivity().getSharedPreferences("SoundboxPrefs", Context.MODE_PRIVATE)
             prefs.edit().putString("active_voice", voice.id).apply()
             Toast.makeText(requireContext(), "${voice.name} Activated!", Toast.LENGTH_SHORT).show()
@@ -66,7 +64,6 @@ class VoicePacksFragment : Fragment() {
             holder.tvDesc.text = voice.desc
 
             holder.btnPreview.setOnClickListener {
-                Toast.init // Sample preview toast or MediaPlayer trigger
                 Toast.makeText(holder.itemView.context, "Playing sample for ${voice.name}...", Toast.LENGTH_SHORT).show()
             }
 
