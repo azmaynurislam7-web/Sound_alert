@@ -3,6 +3,7 @@ package com.soundbox.app
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
@@ -24,6 +25,11 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     private var isRunning = false
     private val CHANNEL_ID = "SoundboxChannel"
 
+    companion object {
+        const val ACTION_START = "com.soundbox.app.ACTION_START"
+        const val ACTION_STOP = "com.soundbox.app.ACTION_STOP"
+    }
+
     override fun onCreate() {
         super.onCreate()
         tts = TextToSpeech(this, this)
@@ -31,14 +37,29 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val notification = createNotification("Soundbox is active and monitoring payments...")
-        startForeground(1, notification)
+        when (intent?.action) {
+            ACTION_STOP -> {
+                stopMonitoring()
+                return START_NOT_STICKY
+            }
+            else -> {
+                val notification = createNotification("Soundbox is active and monitoring payments...")
+                startForeground(1, notification)
 
-        if (!isRunning) {
-            isRunning = true
-            startPolling()
+                if (!isRunning) {
+                    isRunning = true
+                    startPolling()
+                }
+            }
         }
         return START_STICKY
+    }
+
+    private fun stopMonitoring() {
+        isRunning = false
+        serviceScope.cancel()
+        stopForeground(STOP_FOREGROUND_REMOVE)
+        stopSelf()
     }
 
     private fun createNotificationChannel() {
@@ -54,10 +75,31 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     }
 
     private fun createNotification(message: String): Notification {
+        // Notification par click karne par app open (redirect) hone ke liye Intent
+        val notificationIntent = Intent(this, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
+        val pendingIntent = PendingIntent.getActivity(
+            this, 0, notificationIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        // Notification ke andar Stop button click hone ke liye Intent
+        val stopIntent = Intent(this, SoundAlertService::class.java).apply {
+            action = ACTION_STOP
+        }
+        val stopPendingIntent = PendingIntent.getService(
+            this, 0, stopIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("Razorpay Soundbox")
             .setContentText(message)
             .setSmallIcon(android.R.drawable.ic_menu_compass)
+            .setContentIntent(pendingIntent) // Tap to open app
+            .addAction(android.R.drawable.ic_media_pause, "Stop", stopPendingIntent) // Stop button in notification
+            .setOngoing(true)
             .build()
     }
 
@@ -117,6 +159,20 @@ class SoundAlertService : Service(), TextToSpeech.OnInitListener {
     private fun speakOut(amount: Int) {
         val prefs = getSharedPreferences("SoundboxPrefs", Context.MODE_PRIVATE)
         val activeVoiceId = prefs.getString("active_voice", "paytm_en") ?: "paytm_en"
+
+        // Active voice pack ke hisab se dynamic locale/language set hoga
+        val locale = when {
+            activeVoiceId.contains("_hi") || activeVoiceId.contains("amazon") || activeVoiceId.contains("bhim") -> Locale("hi", "IN")
+            activeVoiceId.contains("_bn") -> Locale("bn", "IN")
+            activeVoiceId.contains("gujarati") -> Locale("gu", "IN")
+            activeVoiceId.contains("tamil") -> Locale("ta", "IN")
+            activeVoiceId.contains("telugu") -> Locale("te", "IN")
+            activeVoiceId.contains("marathi") -> Locale("mr", "IN")
+            activeVoiceId.contains("punjabi") -> Locale("pa", "IN")
+            else -> Locale("en", "IN")
+        }
+        
+        tts.language = locale
 
         // Active voice pack ke hisab se dynamic message set hoga
         val textToSpeak = when (activeVoiceId) {
