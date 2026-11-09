@@ -2,6 +2,7 @@ package com.soundbox.app
 
 import android.content.Context
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,8 +12,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.util.Locale
 
-class VoicePacksFragment : Fragment() {
+class VoicePacksFragment : Fragment(), TextToSpeech.OnInitListener {
+
+    private lateinit var tts: TextToSpeech
 
     data class VoicePack(val id: String, val name: String, val desc: String)
 
@@ -51,19 +55,44 @@ class VoicePacksFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_voice_packs, container, false)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewVoices)
 
+        // TextToSpeech initialize kar rahe hain
+        tts = TextToSpeech(requireContext(), this)
+
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        recyclerView.adapter = VoiceAdapter(voiceList) { voice ->
-            val prefs = requireActivity().getSharedPreferences("SoundboxPrefs", Context.MODE_PRIVATE)
-            prefs.edit().putString("active_voice", voice.id).apply()
-            Toast.makeText(requireContext(), "${voice.name} Activated!", Toast.LENGTH_SHORT).show()
-        }
+        recyclerView.adapter = VoiceAdapter(
+            voiceList,
+            onSelect = { voice ->
+                val prefs = requireActivity().getSharedPreferences("SoundboxPrefs", Context.MODE_PRIVATE)
+                prefs.edit().putString("active_voice", voice.id).apply()
+                Toast.makeText(requireContext(), "${voice.name} Activated!", Toast.LENGTH_SHORT).show()
+            },
+            onPreview = { voice ->
+                // Preview click par voice bolkar sunayega
+                tts.speak(voice.desc, TextToSpeech.QUEUE_FLUSH, null, null)
+            }
+        )
 
         return view
     }
 
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            tts.language = Locale("en", "IN")
+        }
+    }
+
+    override fun onDestroy() {
+        if (::tts.isInitialized) {
+            tts.stop()
+            tts.shutdown()
+        }
+        super.onDestroy()
+    }
+
     class VoiceAdapter(
         private val list: List<VoicePack>,
-        private val onSelect: (VoicePack) -> Unit
+        private val onSelect: (VoicePack) -> Unit,
+        private val onPreview: (VoicePack) -> Unit
     ) : RecyclerView.Adapter<VoiceAdapter.ViewHolder>() {
 
         class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -85,7 +114,7 @@ class VoicePacksFragment : Fragment() {
             holder.tvDesc.text = voice.desc
 
             holder.btnPreview.setOnClickListener {
-                Toast.makeText(holder.itemView.context, "Playing sample for ${voice.name}...", Toast.LENGTH_SHORT).show()
+                onPreview(voice)
             }
 
             holder.btnSelect.setOnClickListener {
