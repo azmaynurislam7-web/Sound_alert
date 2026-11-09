@@ -12,7 +12,6 @@ import java.util.concurrent.Executor
 
 class PinActivity : AppCompatActivity() {
 
-    private val DEFAULT_PIN = "1234"
     private lateinit var executor: Executor
     private lateinit var biometricPrompt: BiometricPrompt
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
@@ -22,29 +21,36 @@ class PinActivity : AppCompatActivity() {
         setContentView(R.layout.activity_pin)
 
         val sharedPrefs = getSharedPreferences("SoundboxPrefs", MODE_PRIVATE)
-        val isPinEnabled = sharedPrefs.getBoolean("is_pin_enabled", true)
+        val isPinEnabled = sharedPrefs.getBoolean("is_pin_enabled", false)
         val isBiometricEnabled = sharedPrefs.getBoolean("is_biometric_enabled", false)
 
         val etPin = findViewById<EditText>(R.id.etPin)
         val btnUnlock = findViewById<Button>(R.id.btnUnlock)
 
+        // Agar PIN lock enabled nahi hai toh direct main activity par navigate karein
         if (!isPinEnabled) {
             navigateToMain()
             return
         }
 
+        // Agar biometric enabled hai toh biometric prompt trigger karein
         if (isBiometricEnabled) {
             setupBiometricAuthentication()
         }
 
         btnUnlock.setOnClickListener {
-            val enteredPin = etPin.text.toString()
-            val savedPin = sharedPrefs.getString("app_pin", DEFAULT_PIN)
+            val enteredPin = etPin.text.toString().trim()
+            val savedPin = sharedPrefs.getString("app_pin", "")
+
+            if (enteredPin.isEmpty()) {
+                Toast.makeText(this, "Please enter your PIN", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
 
             if (enteredPin == savedPin) {
                 navigateToMain()
             } else {
-                Toast.makeText(this, "Galat PIN! Dubara koshish karein.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Incorrect PIN. Please try again.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -55,7 +61,7 @@ class PinActivity : AppCompatActivity() {
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    Toast.makeText(applicationContext, "Biometric Verified!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Biometric Verified", Toast.LENGTH_SHORT).show()
                     navigateToMain()
                 }
 
@@ -65,7 +71,7 @@ class PinActivity : AppCompatActivity() {
 
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
-                    Toast.makeText(applicationContext, "Fingerprint not recognized.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Fingerprint not recognized", Toast.LENGTH_SHORT).show()
                 }
             })
 
