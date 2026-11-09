@@ -17,10 +17,31 @@ class VoicePacksFragment : Fragment() {
     data class VoicePack(val id: String, val name: String, val desc: String)
 
     private val voiceList = listOf(
-        VoicePack("hi_male", "Hindi (Default Male)", "Clear & loud UPI alert"),
-        VoicePack("hi_female", "Hindi (Female Voice)", "Professional corporate tone"),
-        VoicePack("en_us", "English (Global Accent)", "Standard English audio"),
-        VoicePack("bengali", "Bengali (Regional)", "Local merchant preference")
+        VoicePack("paytm_en", "Paytm Style - English", "Standard 2s Alert"),
+        VoicePack("paytm_hi", "Paytm Style - Hindi", "Paytm par 10 rupaye prapt hue"),
+        VoicePack("paytm_bn", "Paytm Style - Bengali", "Paytm a 10 taka paoya gelo"),
+        VoicePack("phonepe_en", "PhonePe Style - English", "Received Rs. 10 successfully"),
+        VoicePack("phonepe_hi", "PhonePe Style - Hindi", "PhonePe par 20 rupaye mile"),
+        VoicePack("gpay_en", "Google Pay Style - English", "Google Pay: Received 50 rupees"),
+        VoicePack("gpay_hi", "Google Pay Style - Hindi", "Google Pay par 100 rupaye prapt hue"),
+        VoicePack("classic_bell", "Classic Bell Sound", "Traditional Soundbox Beep + Tone"),
+        VoicePack("loud_alert", "Loud Payment Alert", "High volume tone for noisy shops"),
+        VoicePack("fast_upi", "Fast UPI Tone", "Quick notification sound"),
+        VoicePack("amazon_hi", "Amazon Pay Style", "Amazon Pay se 500 rupaye prapt hue"),
+        VoicePack("bhim_hi", "BHIM UPI Voice", "BHIM app par payment mila"),
+        VoicePack("mobikwik_en", "Mobikwik Alert", "Mobikwik wallet credited"),
+        VoicePack("fampay_en", "Fampay Teen Tone", "Fun style payment alert"),
+        VoicePack("corporate_en", "Corporate Executive", "Professional chime alert"),
+        VoicePack("royal_tone", "Royal Soundbox Tone", "Premium bass sound alert"),
+        VoicePack("cyberpunk", "Cyberpunk Alert", "Futuristic electronic beep"),
+        VoicePack("soft_bell", "Soft Bell Tone", "Gentle background chime"),
+        VoicePack("dual_tone", "Dual Tone Alert", "Double beep payment notification"),
+        VoicePack("mega_volume", "Mega Volume Alert", "Max amplification sound pack"),
+        VoicePack("gujarati_upi", "Gujarati UPI Tone", "Paytm ma rupiya malya"),
+        VoicePack("tamil_upi", "Tamil UPI Tone", "Paytm-il roobai vanthathu"),
+        VoicePack("telugu_upi", "Telugu UPI Tone", "Paytm lo rupayilu vachayi"),
+        VoicePack("marathi_upi", "Marathi UPI Tone", "Paytm madhye rupaye prapt"),
+        VoicePack("punjabi_upi", "Punjabi UPI Tone", "Paytm vich paise aaye")
     )
 
     override fun onCreateView(
