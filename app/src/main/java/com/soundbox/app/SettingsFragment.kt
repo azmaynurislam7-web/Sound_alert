@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 import androidx.fragment.app.Fragment
 
 class SettingsFragment : Fragment() {
@@ -21,10 +22,31 @@ class SettingsFragment : Fragment() {
         val etSecret = view.findViewById<EditText>(R.id.etWebhookSecret)
         val btnSave = view.findViewById<Button>(R.id.btnSaveConfig)
 
+        // Security Toggles
+        val switchPinLock = view.findViewById<SwitchCompat>(R.id.switchPinLock)
+        val switchBiometric = view.findViewById<SwitchCompat>(R.id.switchBiometric)
+
         val prefs = requireActivity().getSharedPreferences("SoundboxPrefs", Context.MODE_PRIVATE)
+        
+        // Load existing saved configurations
         etWebhook.setText(prefs.getString("webhook_url", ""))
         etKeyId.setText(prefs.getString("razorpay_key", ""))
         etSecret.setText(prefs.getString("webhook_secret", ""))
+
+        // Load security toggle states
+        switchPinLock.isChecked = prefs.getBoolean("is_pin_enabled", true)
+        switchBiometric.isChecked = prefs.getBoolean("is_biometric_enabled", false)
+
+        // Save switch states instantly on change
+        switchPinLock.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean("is_pin_enabled", isChecked).apply()
+            Toast.makeText(requireContext(), if (isChecked) "PIN Lock Enabled" else "PIN Lock Disabled", Toast.LENGTH_SHORT).show()
+        }
+
+        switchBiometric.setOnCheckedChangeListener { _, isChecked ->
+            prefs.edit().putBoolean("is_biometric_enabled", isChecked).apply()
+            Toast.makeText(requireContext(), if (isChecked) "Biometric Lock Enabled" else "Biometric Lock Disabled", Toast.LENGTH_SHORT).show()
+        }
 
         btnSave.setOnClickListener {
             val keyId = etKeyId.text.toString().trim()
