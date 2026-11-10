@@ -2,8 +2,9 @@ package com.soundbox.app
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
-import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
@@ -21,13 +22,25 @@ class PinActivity : AppCompatActivity() {
     private lateinit var promptInfo: BiometricPrompt.PromptInfo
     private val databaseRef = FirebaseDatabase.getInstance().reference.child("soundbox_settings")
 
+    private val enteredPinBuilder = StringBuilder()
+    private lateinit var pinDots: Array<View>
+    private lateinit var tvTitle: TextView
+    private lateinit var btnFingerprint: Button
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pin)
 
         val sharedPrefs = getSharedPreferences("SoundboxPrefs", MODE_PRIVATE)
-        val etPin = findViewById<EditText>(R.id.etPin)
-        val btnUnlock = findViewById<Button>(R.id.btnUnlock)
+        tvTitle = findViewById(R.id.tvPinTitle)
+
+        // 4 PIN Dot indicators mapping (ensure your activity_pin.xml has these ids or matching views)
+        pinDots = arrayOf(
+            findViewById(R.id.pinDot1),
+            findViewById(R.id.pinDot2),
+            findViewById(R.id.pinDot3),
+            findViewById(R.id.pinDot4)
+        )
 
         // Fetch security configurations from Firebase Realtime Database
         databaseRef.addListenerForSingleValueEvent(object : ValueEventListener {
@@ -43,48 +56,25 @@ class PinActivity : AppCompatActivity() {
                     .putString("app_pin", savedPin)
                     .apply()
 
-                // Agar PIN lock enabled nahi hai toh direct main activity par navigate karein
                 if (!isPinEnabled) {
                     navigateToMain()
                     return
                 }
 
-                // Agar PIN set nahi hai toh button text "Set PIN" kar dein
                 if (savedPin.isNullOrEmpty()) {
-                    btnUnlock.text = "Set PIN"
+                    tvTitle.text = "Set your Soundbox PIN"
+                } else {
+                    tvTitle.text = "Enter your Soundbox PIN"
                 }
 
-                // Agar biometric enabled hai aur PIN pehle se set hai toh biometric prompt trigger karein
                 if (isBiometricEnabled && !savedPin.isNullOrEmpty()) {
                     setupBiometricAuthentication()
                 }
 
-                btnUnlock.setOnClickListener {
-                    val enteredPin = etPin.text.toString().trim()
-
-                    if (enteredPin.isEmpty()) {
-                        Toast.makeText(this@PinActivity, "Please enter PIN", Toast.LENGTH_SHORT).show()
-                        return@setOnClickListener
-                    }
-
-                    if (savedPin.isNullOrEmpty()) {
-                        // Naya PIN set karke Firebase aur local storage mein save karein
-                        databaseRef.child("app_pin").setValue(enteredPin)
-                        sharedPrefs.edit().putString("app_pin", enteredPin).apply()
-                        Toast.makeText(this@PinActivity, "PIN Set Successfully", Toast.LENGTH_SHORT).show()
-                        navigateToMain()
-                    } else {
-                        if (enteredPin == savedPin) {
-                            navigateToMain()
-                        } else {
-                            Toast.makeText(this@PinActivity, "Incorrect PIN. Please try again.", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
+                setupKeypad(savedPin)
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // Fallback to local SharedPreferences if offline
                 val isPinEnabled = sharedPrefs.getBoolean("is_pin_enabled", false)
                 val isBiometricEnabled = sharedPrefs.getBoolean("is_biometric_enabled", false)
                 val savedPin = sharedPrefs.getString("app_pin", "")
@@ -98,20 +88,75 @@ class PinActivity : AppCompatActivity() {
                     setupBiometricAuthentication()
                 }
 
-                btnUnlock.setOnClickListener {
-                    val enteredPin = etPin.text.toString().trim()
-                    if (enteredPin.isEmpty()) {
-                        Toast.makeText(this@PinActivity, "Please enter your PIN", Toast.LENGTH_SHORT).show()
-                        return@setOnClickListener
-                    }
-                    if (enteredPin == savedPin) {
-                        navigateToMain()
-                    } else {
-                        Toast.makeText(this@PinActivity, "Incorrect PIN. Please try again.", Toast.LENGTH_SHORT).show()
+                setupKeypad(savedPin)
+            }
+        })
+    }
+
+    private fun setupKeypad(savedPin: String?) {
+        val sharedPrefs = getSharedPreferences("SoundboxPrefs", MODE_PRIVATE)
+
+        val numberButtons = listOf(
+            R.id.btn0 to "0", R.id.btn1 to "1", R.id.btn2 to "2",
+            R.id.btn3 to "3", R.id.btn4 to "4", R.id.btn5 to "5",
+            R.id.btn6 to "6", R.id.btn7 to "7", R.id.btn8 to "8",
+            R.id.btn9 to "9"
+        )
+
+        for ((id, digit) in numberButtons) {
+            findViewById<Button>(id)?.setOnClickListener {
+                if (enteredPinBuilder.length < 4) {
+                    enteredPinBuilder.append(digit)
+                    updatePinDots()
+
+                    if (enteredPinBuilder.length == 4) {
+                        verifyOrSetPin(savedPin, sharedPrefs)
                     }
                 }
             }
-        })
+        }
+
+        findViewById<View>(R.id.btnBackspace)?.setOnClickListener {
+            if (enteredPinBuilder.isNotEmpty()) {
+                enteredPinBuilder.deleteCharAt(enteredPinBuilder.length - 1)
+                updatePinDots()
+            }
+        }
+
+        btnFingerprint = findViewById(R.id.btnFingerprint)
+        btnFingerprint.setOnClickListener {
+            setupBiometricAuthentication()
+        }
+    }
+
+    private fun updatePinDots() {
+        val length = enteredPinBuilder.length
+        for (i in pinDots.indices) {
+            if (i < length) {
+                pinDots[i].setBackgroundResource(R.drawable.bg_pin_dot_filled)
+            } else {
+                pinDots[i].setBackgroundResource(R.drawable.bg_pin_dot_empty)
+            }
+        }
+    }
+
+    private fun verifyOrSetPin(savedPin: String?, sharedPrefs: android.content.SharedPreferences) {
+        val enteredPin = enteredPinBuilder.toString()
+
+        if (savedPin.isNullOrEmpty()) {
+            databaseRef.child("app_pin").setValue(enteredPin)
+            sharedPrefs.edit().putString("app_pin", enteredPin).apply()
+            Toast.makeText(this, "PIN Set Successfully", Toast.LENGTH_SHORT).show()
+            navigateToMain()
+        } else {
+            if (enteredPin == savedPin) {
+                navigateToMain()
+            } else {
+                Toast.makeText(this, "Incorrect PIN. Please try again.", Toast.LENGTH_SHORT).show()
+                enteredPinBuilder.clear()
+                updatePinDots()
+            }
+        }
     }
 
     private fun setupBiometricAuthentication() {
