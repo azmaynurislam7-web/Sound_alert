@@ -1,5 +1,6 @@
 package com.soundbox.app
 
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -16,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase
 
 class SettingsFragment : Fragment() {
     private val databaseRef = FirebaseDatabase.getInstance().reference
+    private var isUpdatingSwitch = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_settings, container, false)
@@ -37,24 +39,26 @@ class SettingsFragment : Fragment() {
         etSecret.setText(prefs.getString("webhook_secret", ""))
 
         // Load security toggle states
-        switchPinLock.isChecked = prefs.getBoolean("is_pin_enabled", true)
+        isUpdatingSwitch = true
+        switchPinLock.isChecked = prefs.getBoolean("is_pin_enabled", false)
         switchBiometric.isChecked = prefs.getBoolean("is_biometric_enabled", false)
+        isUpdatingSwitch = false
 
-        // Save switch states instantly on change
+        // Save switch states instantly on change with custom PIN popup setup/disable flow
         switchPinLock.setOnCheckedChangeListener { _, isChecked ->
-            prefs.edit().putBoolean("is_pin_enabled", isChecked).apply()
-            databaseRef.child("soundbox_settings").child("is_pin_enabled").setValue(isChecked)
-            
-            if (!isChecked) {
-                databaseRef.child("soundbox_settings").child("app_pin").removeValue()
-                prefs.edit().remove("app_pin").apply()
-                Toast.makeText(requireContext(), "PIN Lock Disabled & PIN Removed", Toast.LENGTH_SHORT).show()
+            if (isUpdatingSwitch) return@setOnCheckedChangeListener
+
+            if (isChecked) {
+                // Show dialog to enter and set a new PIN
+                showSetPinDialog(switchPinLock, prefs)
             } else {
-                Toast.makeText(requireContext(), "PIN Lock Enabled", Toast.LENGTH_SHORT).show()
+                // Show dialog to enter current PIN to disable
+                showVerifyPinForDisableDialog(switchPinLock, prefs)
             }
         }
 
         switchBiometric.setOnCheckedChangeListener { _, isChecked ->
+            if (isUpdatingSwitch) return@setOnCheckedChangeListener
             prefs.edit().putBoolean("is_biometric_enabled", isChecked).apply()
             databaseRef.child("soundbox_settings").child("is_biometric_enabled").setValue(isChecked)
             Toast.makeText(requireContext(), if (isChecked) "Biometric Lock Enabled" else "Biometric Lock Disabled", Toast.LENGTH_SHORT).show()
@@ -103,5 +107,88 @@ class SettingsFragment : Fragment() {
         }
 
         return view
+    }
+
+    private fun showSetPinDialog(switchPinLock: SwitchCompat, prefs: android.content.SharedPreferences) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_set_pin, null)
+        val etNewPin = dialogView.findViewById<EditText>(R.id.etNewPin)
+        val etConfirmPin = dialogView.findViewById<EditText>(R.id.etConfirmPin)
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Set Soundbox PIN")
+            .setView(dialogView)
+            .setPositiveButton("Save", null)
+            .setNegativeButton("Cancel") { _, _ ->
+                isUpdatingSwitch = true
+                switchPinLock.isChecked = false
+                isUpdatingSwitch = false
+            }
+            .setCancelable(false)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val pin = etNewPin.text.toString().trim()
+                val confirmPin = etConfirmPin.text.toString().trim()
+
+                if (pin.length != 4) {
+                    Toast.makeText(requireContext(), "PIN must be 4 digits", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                if (pin != confirmPin) {
+                    Toast.makeText(requireContext(), "PINs do not match", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // Save PIN to Firebase and SharedPreferences
+                prefs.edit().putBoolean("is_pin_enabled", true).putString("app_pin", pin).apply()
+                databaseRef.child("soundbox_settings").child("is_pin_enabled").setValue(true)
+                databaseRef.child("soundbox_settings").child("app_pin").setValue(pin)
+
+                Toast.makeText(requireContext(), "PIN Lock Enabled Successfully", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
+    }
+
+    private fun showVerifyPinForDisableDialog(switchPinLock: SwitchCompat, prefs: android.content.SharedPreferences) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_verify_pin, null)
+        val etCurrentPin = dialogView.findViewById<EditText>(R.id.etCurrentPin)
+        val savedPin = prefs.getString("app_pin", "")
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Disable PIN Lock")
+            .setView(dialogView)
+            .setPositiveButton("Disable", null)
+            .setNegativeButton("Cancel") { _, _ ->
+                isUpdatingSwitch = true
+                switchPinLock.isChecked = true
+                isUpdatingSwitch = false
+            }
+            .setCancelable(false)
+            .create()
+
+        dialog.setOnShowListener {
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+                val enteredPin = etCurrentPin.text.toString().trim()
+
+                if (enteredPin != savedPin && savedPin!!.isNotEmpty()) {
+                    Toast.makeText(requireContext(), "Incorrect PIN", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+
+                // Disable and remove PIN from Firebase and SharedPreferences
+                prefs.edit().putBoolean("is_pin_enabled", false).remove("app_pin").apply()
+                databaseRef.child("soundbox_settings").child("is_pin_enabled").setValue(false)
+                databaseRef.child("soundbox_settings").child("app_pin").removeValue()
+
+                Toast.makeText(requireContext(), "PIN Lock Disabled & PIN Removed", Toast.LENGTH_SHORT).show()
+                dialog.dismiss()
+            }
+        }
+
+        dialog.show()
     }
 }
