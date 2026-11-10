@@ -43,7 +43,7 @@ class SettingsFragment : Fragment() {
         switchBiometric.isChecked = prefs.getBoolean("is_biometric_enabled", false)
         isUpdatingSwitch = false
 
-        // Open full-screen PinActivity for setting or disabling PIN instead of popups
+        // Popup dialog remove karke seedha gorgeous full-screen PinActivity open hogi
         switchPinLock.setOnCheckedChangeListener { _, isChecked ->
             if (isUpdatingSwitch) return@setOnCheckedChangeListener
 
