@@ -21,31 +21,31 @@ class VoicePacksFragment : Fragment(), TextToSpeech.OnInitListener {
     data class VoicePack(val id: String, val name: String, val desc: String, val avatarRes: Int)
 
     private val voiceList = listOf(
-        VoicePack("paytm_en", "Paytm English", "Standard 2s Alert", android.R.drawable.ic_menu_myplaces),
-        VoicePack("paytm_hi", "Paytm Hindi", "Paytm par 10 rupaye prapt hue", android.R.drawable.ic_menu_gallery),
-        VoicePack("paytm_bn", "Paytm Bengali", "Paytm a 10 taka paoya gelo", android.R.drawable.ic_menu_camera),
-        VoicePack("phonepe_en", "PhonePe English", "Received Rs. 10 successfully", android.R.drawable.ic_menu_call),
-        VoicePack("phonepe_hi", "PhonePe Hindi", "PhonePe par 20 rupaye mile", android.R.drawable.ic_menu_compass),
-        VoicePack("gpay_en", "Google Pay En", "Google Pay: Received 50 rupees", android.R.drawable.ic_menu_day_calendar),
-        VoicePack("gpay_hi", "Google Pay Hi", "Google Pay par 100 rupaye prapt hue", android.R.drawable.ic_menu_directions),
-        VoicePack("classic_bell", "Classic Bell", "Traditional Soundbox Beep + Tone", android.R.drawable.ic_menu_manage),
-        VoicePack("loud_alert", "Loud Alert", "High volume tone for noisy shops", android.R.drawable.ic_menu_mapmode),
-        VoicePack("fast_upi", "Fast UPI Tone", "Quick notification sound", android.R.drawable.ic_menu_my_calendar),
-        VoicePack("amazon_hi", "Amazon Pay", "Amazon Pay se 500 rupaye prapt hue", android.R.drawable.ic_menu_recent_history),
-        VoicePack("bhim_hi", "BHIM UPI", "BHIM app par payment mila", android.R.drawable.ic_menu_search),
-        VoicePack("mobikwik_en", "Mobikwik", "Mobikwik wallet credited", android.R.drawable.ic_menu_send),
+        VoicePack("paytm_en", "Paytm English", "Standard 2s Alert", android.R.drawable.ic_menu_slideshow),
+        VoicePack("paytm_hi", "Paytm Hindi", "Paytm par 10 rupaye prapt hue", android.R.drawable.ic_menu_slideshow),
+        VoicePack("paytm_bn", "Paytm Bengali", "Paytm a 10 taka paoya gelo", android.R.drawable.ic_menu_slideshow),
+        VoicePack("phonepe_en", "PhonePe English", "Received Rs. 10 successfully", android.R.drawable.ic_menu_slideshow),
+        VoicePack("phonepe_hi", "PhonePe Hindi", "PhonePe par 20 rupaye mile", android.R.drawable.ic_menu_slideshow),
+        VoicePack("gpay_en", "Google Pay En", "Google Pay: Received 50 rupees", android.R.drawable.ic_menu_slideshow),
+        VoicePack("gpay_hi", "Google Pay Hi", "Google Pay par 100 rupaye prapt hue", android.R.drawable.ic_menu_slideshow),
+        VoicePack("classic_bell", "Classic Bell", "Traditional Soundbox Beep + Tone", android.R.drawable.ic_menu_slideshow),
+        VoicePack("loud_alert", "Loud Alert", "High volume tone for noisy shops", android.R.drawable.ic_menu_slideshow),
+        VoicePack("fast_upi", "Fast UPI Tone", "Quick notification sound", android.R.drawable.ic_menu_slideshow),
+        VoicePack("amazon_hi", "Amazon Pay", "Amazon Pay se 500 rupaye prapt hue", android.R.drawable.ic_menu_slideshow),
+        VoicePack("bhim_hi", "BHIM UPI", "BHIM app par payment mila", android.R.drawable.ic_menu_slideshow),
+        VoicePack("mobikwik_en", "Mobikwik", "Mobikwik wallet credited", android.R.drawable.ic_menu_slideshow),
         VoicePack("fampay_en", "Fampay Teen", "Fun style payment alert", android.R.drawable.ic_menu_slideshow),
-        VoicePack("corporate_en", "Corporate", "Professional chime alert", android.R.drawable.ic_menu_sort_by_size),
-        VoicePack("royal_tone", "Royal Tone", "Premium bass sound alert", android.R.drawable.ic_menu_today),
-        VoicePack("cyberpunk", "Cyberpunk", "Futuristic electronic beep", android.R.drawable.ic_menu_upload),
-        VoicePack("soft_bell", "Soft Bell", "Gentle background chime", android.R.drawable.ic_menu_view_gallery),
-        VoicePack("dual_tone", "Dual Tone", "Double beep payment notification", android.R.drawable.ic_menu_view_list),
-        VoicePack("mega_volume", "Mega Volume", "Max amplification sound pack", android.R.drawable.ic_menu_agenda),
-        VoicePack("gujarati_upi", "Gujarati UPI", "Paytm ma rupiya malya", android.R.drawable.ic_menu_help),
-        VoicePack("tamil_upi", "Tamil UPI", "Paytm-il roobai vanthathu", android.R.drawable.ic_menu_info_details),
-        VoicePack("telugu_upi", "Telugu UPI", "Paytm lo rupayilu vachayi", android.R.drawable.ic_menu_preferences),
-        VoicePack("marathi_upi", "Marathi UPI", "Paytm madhye rupaye prapt", android.R.drawable.ic_menu_report_image),
-        VoicePack("punjabi_upi", "Punjabi UPI", "Paytm vich paise aaye", android.R.drawable.ic_menu_share)
+        VoicePack("corporate_en", "Corporate", "Professional chime alert", android.R.drawable.ic_menu_slideshow),
+        VoicePack("royal_tone", "Royal Tone", "Premium bass sound alert", android.R.drawable.ic_menu_slideshow),
+        VoicePack("cyberpunk", "Cyberpunk", "Futuristic electronic beep", android.R.drawable.ic_menu_slideshow),
+        VoicePack("soft_bell", "Soft Bell", "Gentle background chime", android.R.drawable.ic_menu_slideshow),
+        VoicePack("dual_tone", "Dual Tone", "Double beep payment notification", android.R.drawable.ic_menu_slideshow),
+        VoicePack("mega_volume", "Mega Volume", "Max amplification sound pack", android.R.drawable.ic_menu_slideshow),
+        VoicePack("gujarati_upi", "Gujarati UPI", "Paytm ma rupiya malya", android.R.drawable.ic_menu_slideshow),
+        VoicePack("tamil_upi", "Tamil UPI", "Paytm-il roobai vanthathu", android.R.drawable.ic_menu_slideshow),
+        VoicePack("telugu_upi", "Telugu UPI", "Paytm lo rupayilu vachayi", android.R.drawable.ic_menu_slideshow),
+        VoicePack("marathi_upi", "Marathi UPI", "Paytm madhye rupaye prapt", android.R.drawable.ic_menu_slideshow),
+        VoicePack("punjabi_upi", "Punjabi UPI", "Paytm vich paise aaye", android.R.drawable.ic_menu_slideshow)
     )
 
     override fun onCreateView(
@@ -55,10 +55,8 @@ class VoicePacksFragment : Fragment(), TextToSpeech.OnInitListener {
         val view = inflater.inflate(R.layout.fragment_voice_packs, container, false)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recyclerViewVoices)
 
-        // TextToSpeech initialize kar rahe hain
         tts = TextToSpeech(requireContext(), this)
 
-        // Grid layout with 3 columns for circular profile style view
         recyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
         recyclerView.adapter = VoiceAdapter(
             voiceList,
