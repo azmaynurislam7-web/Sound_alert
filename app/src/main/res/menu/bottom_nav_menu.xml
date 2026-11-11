@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item
         android:id="@+id/nav_dashboard"
         android:icon="@android:drawable/ic_menu_compass"
         android:title="Dashboard" />
+
     <item
-        android:id="@+id/nav_voice_packs"
-        android:icon="@android:drawable/ic_lock_silent_mode_off"
+        android:id="@+id/nav_voices"
+        android:icon="@android:drawable/ic_btn_speak_now"
         android:title="Voices" />
+
     <item
         android:id="@+id/nav_settings"
         android:icon="@android:drawable/ic_menu_manage"
         android:title="Settings" />
-    <item
-        android:id="@+id/nav_docs"
-        android:icon="@android:drawable/ic_menu_info_details"
-        android:title="Docs" />
+
 </menu>
