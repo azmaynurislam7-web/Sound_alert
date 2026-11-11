@@ -69,6 +69,9 @@ class MainActivity : AppCompatActivity() {
         val textVoices = findViewById<TextView>(R.id.textVoices)
         val textSettings = findViewById<TextView>(R.id.textSettings)
 
+        // Text ko "Chats" se badal kar "Dashboard" kar diya gaya hai
+        textChats.text = "Dashboard"
+
         val activeColor = Color.parseColor("#34D399")
         val inactiveColor = Color.parseColor("#9CA3AF")
 
