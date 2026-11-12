@@ -26,8 +26,9 @@
         android:theme="@style/Theme.RazorpaySoundbox"
         tools:targetApi="31">
 
+        <!-- Login Activity as Launcher -->
         <activity
-            android:name=".PinActivity"
+            android:name=".LoginActivity"
             android:exported="true"
             android:theme="@style/Theme.RazorpaySoundbox.NoActionBar">
             <intent-filter>
@@ -35,6 +36,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".RegisterActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RazorpaySoundbox.NoActionBar" />
+
+        <activity
+            android:name=".PinActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RazorpaySoundbox.NoActionBar" />
 
         <activity
             android:name=".MainActivity"
