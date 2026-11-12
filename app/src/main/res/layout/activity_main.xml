@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark">
+    android:background="#0D0D0D">
 
     <!-- Fragment Container for Tabs -->
     <FrameLayout
@@ -12,7 +12,7 @@
         android:layout_height="match_parent"
         android:layout_above="@id/floatingNavLayout" />
 
-    <!-- Telegram Style Floating Bottom Navigation Bar -->
+    <!-- Telegram / WhatsApp Style Floating Bottom Navigation Bar -->
     <LinearLayout
         android:id="@+id/floatingNavLayout"
         android:layout_width="match_parent"
@@ -25,7 +25,7 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
-        <!-- Tab 1: Dashboard / Home -->
+        <!-- Tab 1: Chats -->
         <LinearLayout
             android:id="@+id/navChats"
             android:layout_width="0dp"
@@ -46,12 +46,12 @@
                 android:id="@+id/textChats"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Dashboard"
+                android:text="Chats"
                 android:textColor="#34D399"
                 android:textSize="11sp"/>
         </LinearLayout>
 
-        <!-- Tab 2: Voice Packs -->
+        <!-- Tab 2: Calls -->
         <LinearLayout
             android:id="@+id/navVoices"
             android:layout_width="0dp"
@@ -72,7 +72,7 @@
                 android:id="@+id/textVoices"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Voices"
+                android:text="Calls"
                 android:textColor="#9CA3AF"
                 android:textSize="11sp"/>
         </LinearLayout>
