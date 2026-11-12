@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,7 +27,6 @@ class ChatsFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(context)
 
         userAdapter = UserAdapter(userList) { user ->
-            // Jab kisi user par click ho, toh ChatActivity khulegi (jisme messages honge)
             val intent = Intent(context, ChatActivity::class.java).apply {
                 putExtra("userId", user.uid)
                 putExtra("userEmail", user.email)
@@ -64,9 +62,3 @@ class ChatsFragment : Fragment() {
         })
     }
 }
-
-// User Data Model
-data class User(
-    val uid: String = "",
-    val email: String = ""
-)
