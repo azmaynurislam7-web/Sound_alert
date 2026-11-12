@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { _ ->
-            startSoundService()
+            // Permissions handled
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,17 +40,17 @@ class MainActivity : AppCompatActivity() {
         val navSettings = findViewById<LinearLayout>(R.id.navSettings)
 
         if (savedInstanceState == null) {
-            loadFragment(DashboardFragment())
+            loadFragment(ChatsFragment())
             updateNavSelection(0)
         }
 
         navChats.setOnClickListener {
-            loadFragment(DashboardFragment())
+            loadFragment(ChatsFragment())
             updateNavSelection(0)
         }
 
         navVoices.setOnClickListener {
-            loadFragment(VoicePacksFragment())
+            loadFragment(CallsFragment())
             updateNavSelection(1)
         }
 
@@ -69,8 +69,9 @@ class MainActivity : AppCompatActivity() {
         val textVoices = findViewById<TextView>(R.id.textVoices)
         val textSettings = findViewById<TextView>(R.id.textSettings)
 
-        // Text ko "Chats" se badal kar "Dashboard" kar diya gaya hai
-        textChats.text = "Dashboard"
+        // WhatsApp style labels
+        textChats.text = "Chats"
+        textVoices.text = "Calls"
 
         val activeColor = Color.parseColor("#34D399")
         val inactiveColor = Color.parseColor("#9CA3AF")
@@ -138,10 +139,5 @@ class MainActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
-    }
-
-    private fun startSoundService() {
-        val serviceIntent = Intent(this, SoundAlertService::class.java)
-        ContextCompat.startForegroundService(this, serviceIntent)
     }
 }
