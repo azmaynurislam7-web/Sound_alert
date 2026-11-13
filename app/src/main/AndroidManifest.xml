@@ -52,6 +52,12 @@
             android:exported="false"
             android:theme="@style/Theme.RazorpaySoundbox.NoActionBar" />
 
+        <!-- User List Activity for WhatsApp-like Contact Directory -->
+        <activity
+            android:name=".UserListActivity"
+            android:exported="false"
+            android:theme="@style/Theme.RazorpaySoundbox.NoActionBar" />
+
         <service
             android:name=".SoundAlertService"
             android:enabled="true"
