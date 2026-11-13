@@ -35,7 +35,6 @@ class UserListActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
         
         userAdapter = UserAdapter(userList) { user ->
-            // Click karne par Chat Activity open hogi (Receiver ID aur Name pass hoga)
             val intent = Intent(this, ChatActivity::class.java).apply {
                 putExtra("receiverId", user.uid)
                 putExtra("receiverName", user.username)
@@ -54,7 +53,6 @@ class UserListActivity : AppCompatActivity() {
                 userList.clear()
                 for (data in snapshot.children) {
                     val user = data.getValue(User::class.java)
-                    // Khud ki profile ko list se hata kar baaki saare users dikhayein
                     if (user != null && user.uid != currentUserId) {
                         userList.add(user)
                     }
@@ -62,14 +60,11 @@ class UserListActivity : AppCompatActivity() {
                 userAdapter.notifyDataSetChanged()
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Error handling agar zaroori ho
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 }
 
-// RecyclerView Adapter for Users List
 class UserAdapter(
     private val users: List<User>,
     private val onClick: (User) -> Unit
@@ -90,7 +85,7 @@ class UserAdapter(
         val user = users[position]
         holder.tvUsername.text = user.username
         holder.tvUserBio.text = if (user.bio.isNotEmpty()) user.bio else "Hey there! I am using Chat Wave."
-        holder.tvUserInitial.text = user.username.take(1).uppercase()
+        holder.tvUserInitial.text = if (user.username.isNotEmpty()) user.username.take(1).uppercase() else "U"
 
         holder.itemView.setOnClickListener { onClick(user) }
     }
