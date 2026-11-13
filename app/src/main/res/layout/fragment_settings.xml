@@ -1,4 +1,4 @@
-<!-- WhatsApp Style Settings Options -->
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,6 +17,33 @@
             android:textColor="#E9EDEF"
             android:textSize="22sp"
             android:textStyle="bold" />
+
+        <!-- Account / Email Section -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="#202C33"
+            android:orientation="vertical"
+            android:padding="12dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="ACCOUNT"
+                android:textColor="#00A884"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvUserEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="user@email.com"
+                android:textColor="#E9EDEF"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <!-- Profile Photo Setting -->
         <LinearLayout
@@ -44,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            text="Read Receipts (Blue Ticks)"
+            android:text="Read Receipts (Blue Ticks)"
             android:textColor="#E9EDEF" />
 
         <!-- Typing Indicator -->
@@ -53,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            text="Show Typing Indicator"
+            android:text="Show Typing Indicator"
             android:textColor="#E9EDEF" />
 
         <!-- Chat Theme -->
@@ -64,6 +91,17 @@
             android:text="Chat Theme (Dark / Light)"
             android:textColor="#00A884"
             android:textSize="14sp" />
+
+        <!-- Logout Button -->
+        <Button
+            android:id="@+id/btnLogout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:backgroundTint="#F15C6D"
+            android:text="LOGOUT"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>
