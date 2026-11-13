@@ -22,14 +22,8 @@ class SettingsFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         val currentUserId = auth.currentUser?.uid
 
-        val tvUserEmail = view.findViewById<TextView>(R.id.tvUserEmail)
-        val btnLogout = view.findViewById<Button>(R.id.btnLogout)
         val switchReadReceipts = view.findViewById<Switch>(R.id.switchReadReceipts)
         val switchTyping = view.findViewById<Switch>(R.id.switchTyping)
-
-        // Display current logged in user email safely
-        val currentUserEmail = auth.currentUser?.email ?: "No Email"
-        tvUserEmail?.text = currentUserEmail
 
         // Reference to user settings in Firebase
         val userSettingsRef = currentUserId?.let {
@@ -44,16 +38,6 @@ class SettingsFragment : Fragment() {
         // Save Typing Indicator preference
         switchTyping?.setOnCheckedChangeListener { _, isChecked ->
             userSettingsRef?.child("typingIndicator")?.setValue(isChecked)
-        }
-
-        // Logout action safely
-        btnLogout?.setOnClickListener {
-            auth.signOut()
-            val intent = Intent(requireContext(), LoginActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-            startActivity(intent)
-            activity?.finish()
         }
 
         return view
