@@ -1,81 +1,69 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- WhatsApp Style Settings Options -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0D0D0D"
-    android:fillViewport="true">
+    android:background="#111B21"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="20dp">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Settings"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
+            android:textColor="#E9EDEF"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
+        <!-- Profile Photo Setting -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical">
+            <TextView android:text="Profile Photo" android:textColor="#00A884" android:textSize="14sp"/>
+            <TextView android:text="Everyone can see your profile photo" android:textColor="#8696A0" android:textSize="12sp"/>
+        </LinearLayout>
+
+        <!-- Last Seen & Online Setting -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:orientation="vertical">
+            <TextView android:text="Last Seen &amp; Online" android:textColor="#00A884" android:textSize="14sp"/>
+            <TextView android:text="Who can see my last seen: Everyone / Nobody" android:textColor="#8696A0" android:textSize="12sp"/>
+        </LinearLayout>
+
+        <!-- Read Receipts -->
+        <Switch
+            android:id="@+id/switchReadReceipts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            text="Read Receipts (Blue Ticks)"
+            android:textColor="#E9EDEF" />
+
+        <!-- Typing Indicator -->
+        <Switch
+            android:id="@+id/switchTyping"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            text="Show Typing Indicator"
+            android:textColor="#E9EDEF" />
+
+        <!-- Chat Theme -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="24dp"
-            android:text="Manage your account settings"
-            android:textColor="#9CA3AF"
+            android:layout_marginTop="24dp"
+            android:text="Chat Theme (Dark / Light)"
+            android:textColor="#00A884"
             android:textSize="14sp" />
-
-        <!-- Account Profile Card -->
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:cardBackgroundColor="#171717"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="0dp"
-            app:strokeColor="#262626"
-            app:strokeWidth="1dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="16dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="ACCOUNT"
-                    android:textColor="#34D399"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tvUserEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="user@example.com"
-                    android:textColor="@android:color/white"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- Logout Button Card -->
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:backgroundTint="#EF4444"
-            android:text="Logout"
-            android:textColor="@android:color/white"
-            android:textSize="15sp"
-            android:textStyle="bold" />
 
     </LinearLayout>
 </ScrollView>
