@@ -39,7 +39,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        // WhatsApp jaisa Direct Reply Intent
         val replyIntent = Intent(this, DirectReplyReceiver::class.java).apply {
             putExtra("senderId", senderId)
         }
@@ -56,7 +55,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             android.R.drawable.ic_menu_send, "Reply", replyPendingIntent
         ).addRemoteInput(remoteInput).build()
 
-        // Notification builder with App Name "CW" & Sender Name
         val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("CW • $senderName")
