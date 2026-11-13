@@ -28,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
         val btnLogin = findViewById<Button>(R.id.btnLogin)
-        val tvRegisterRedirect = findViewById<TextView>(R.id.tvRegisterRedirect)
+        val tvGoToRegister = findViewById<TextView>(R.id.tvGoToRegister)
 
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
@@ -49,7 +49,7 @@ class LoginActivity : AppCompatActivity() {
             }
         }
 
-        tvRegisterRedirect.setOnClickListener {
+        tvGoToRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
