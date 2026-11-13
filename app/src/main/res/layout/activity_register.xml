@@ -2,127 +2,178 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark">
+    android:background="#FFFFFF">
 
-    <!-- Top Gradient Header -->
-    <ImageView
+    <!-- Top Orange/Red Gradient Wave Header -->
+    <View
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/bg_telegram_nav"
-        android:rotation="180"
-        android:alpha="0.8" />
+        android:layout_height="220dp"
+        android:background="@drawable/bg_login_top_wave" />
 
-    <LinearLayout
+    <!-- Bottom Blue Gradient Wave -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_login_bottom_wave" />
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:fillViewport="true">
 
-        <!-- App Branding: CW & Chat Wave -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CW"
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_white"
-            android:letterSpacing="0.1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:text="Chat Wave"
-            android:textSize="14sp"
-            android:textColor="@color/primary_accent"
-            android:textStyle="bold"
-            android:letterSpacing="0.2" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:text="Register"
-            android:textColor="@color/text_white"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <!-- Input Card Container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_telegram_nav"
-            android:backgroundTint="@color/card_dark"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="20dp">
+            android:paddingHorizontal="24dp"
+            android:paddingTop="40dp"
+            android:paddingBottom="40dp">
 
-            <!-- Username Input -->
-            <EditText
-                android:id="@+id/etUsername"
+            <!-- Top Login Link for Register Page -->
+            <TextView
+                android:id="@+id/tvGoToLoginTop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:text="Login"
+                android:textColor="#FF5722"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <!-- App Branding: CW & Chat Wave -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CW"
+                android:textColor="#222222"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30dp"
+                android:text="Chat Wave"
+                android:textColor="#00C853"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.15" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:text="Register"
+                android:textColor="#333333"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <!-- Card Container for Inputs -->
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginBottom="12dp"
-                android:background="@android:color/transparent"
-                android:hint="Username"
-                android:inputType="textPersonName"
-                android:paddingHorizontal="12dp"
-                android:textColor="@color/text_white"
-                android:textColorHint="@color/text_gray"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="6dp"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/btnRegisterAction"
+                    android:layout_marginEnd="12dp"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/etUsername"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@android:color/transparent"
+                        android:hint="Username"
+                        android:inputType="textPersonName"
+                        android:textColor="#222222"
+                        android:textColorHint="#AAAAAA"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F0F0F0" />
+
+                    <EditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@android:color/transparent"
+                        android:hint="Password"
+                        android:inputType="textPassword"
+                        android:textColor="#222222"
+                        android:textColorHint="#AAAAAA"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="#F0F0F0" />
+
+                    <EditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:background="@android:color/transparent"
+                        android:hint="Email"
+                        android:inputType="textEmailAddress"
+                        android:textColor="#222222"
+                        android:textColorHint="#AAAAAA"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Floating Circular Action Button (Checkmark) -->
+                <FrameLayout
+                    android:id="@+id/btnRegisterAction"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bg_circle_green">
+
+                    <!-- Simple check icon or symbol -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="✓"
+                        android:textColor="#FFFFFF"
+                        android:textSize="22sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+            </RelativeLayout>
+
+            <!-- Hidden standard button to keep java compatibility -->
+            <Button
+                android:id="@+id/btnRegister"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:backgroundTint="#00C853"
+                android:text="Register"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAllCaps="false" />
+
+            <TextView
+                android:id="@+id/tvGoToLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Already have an account? Login"
+                android:textColor="#666666"
                 android:textSize="14sp" />
 
-            <!-- Email Input -->
-            <EditText
-                android:id="@+id/etEmail"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginBottom="12dp"
-                android:background="@android:color/transparent"
-                android:hint="Email"
-                android:inputType="textEmailAddress"
-                android:paddingHorizontal="12dp"
-                android:textColor="@color/text_white"
-                android:textColorHint="@color/text_gray"
-                android:textSize="14sp" />
-
-            <!-- Password Input -->
-            <EditText
-                android:id="@+id/etPassword"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:background="@android:color/transparent"
-                android:hint="Password"
-                android:inputType="textPassword"
-                android:paddingHorizontal="12dp"
-                android:textColor="@color/text_white"
-                android:textColorHint="@color/text_gray"
-                android:textSize="14sp" />
         </LinearLayout>
-
-        <!-- Register Button Action -->
-        <Button
-            android:id="@+id/btnRegister"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginTop="20dp"
-            android:backgroundTint="@color/primary_accent"
-            android:text="Register"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textAllCaps="false" />
-
-        <!-- Switch to Login -->
-        <TextView
-            android:id="@+id/tvGoToLogin"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Already have an account? Login"
-            android:textColor="@color/text_gray"
-            android:textSize="14sp" />
-
-    </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>
