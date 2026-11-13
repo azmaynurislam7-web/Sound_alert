@@ -27,7 +27,7 @@ class SettingsFragment : Fragment() {
         val switchReadReceipts = view.findViewById<Switch>(R.id.switchReadReceipts)
         val switchTyping = view.findViewById<Switch>(R.id.switchTyping)
 
-        // Display current logged in user email
+        // Display current logged in user email safely
         val currentUserEmail = auth.currentUser?.email ?: "No Email"
         tvUserEmail?.text = currentUserEmail
 
@@ -46,7 +46,7 @@ class SettingsFragment : Fragment() {
             userSettingsRef?.child("typingIndicator")?.setValue(isChecked)
         }
 
-        // Logout action
+        // Logout action safely
         btnLogout?.setOnClickListener {
             auth.signOut()
             val intent = Intent(requireContext(), LoginActivity::class.java).apply {
