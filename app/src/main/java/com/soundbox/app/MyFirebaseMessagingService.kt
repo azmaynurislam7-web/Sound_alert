@@ -39,11 +39,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             notificationManager.createNotificationChannel(channel)
         }
 
-        val replyIntent = Intent(this, DirectReplyReceiver::class.java).apply {
+        val replyIntent = Intent(applicationContext, DirectReplyReceiver::class.java).apply {
             putExtra("senderId", senderId)
         }
         val replyPendingIntent = PendingIntent.getBroadcast(
-            this, 0, replyIntent,
+            applicationContext, 0, replyIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
@@ -55,7 +55,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             android.R.drawable.ic_menu_send, "Reply", replyPendingIntent
         ).addRemoteInput(remoteInput).build()
 
-        val notification = NotificationCompat.Builder(this, channelId)
+        val notification = NotificationCompat.Builder(applicationContext, channelId)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle("CW • $senderName")
             .setContentText(message)
