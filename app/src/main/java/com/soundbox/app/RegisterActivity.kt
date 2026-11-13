@@ -20,33 +20,38 @@ class RegisterActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
+        val etUsername = findViewById<EditText>(R.id.etUsername)
         val etEmail = findViewById<EditText>(R.id.etEmail)
         val etPassword = findViewById<EditText>(R.id.etPassword)
-        val btnRegister = findViewById<Button>(R.id.btnLogin)
-        val tvLoginRedirect = findViewById<TextView>(R.id.tvRegisterRedirect)
-
-        btnRegister.text = "Register"
-        tvLoginRedirect.text = "Already have an account? Login"
+        val btnRegister = findViewById<Button>(R.id.btnRegister)
+        val tvGoToLogin = findViewById<TextView>(R.id.tvGoToLogin)
 
         btnRegister.setOnClickListener {
+            val username = etUsername.text.toString().trim()
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
-            if (email.isNotEmpty() && password.isNotEmpty()) {
+            if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
                             val userId = auth.currentUser?.uid ?: ""
-                            val userMap = mapOf("email" to email, "uid" to userId)
-                            
-                            // Realtime Database mein user save karein
-                            FirebaseDatabase.getInstance().getReference("Users").child(userId).setValue(userMap)
-
-                            Toast.makeText(this, "Registration Successful!", Toast.LENGTH_SHORT).show()
-                            startActivity(Intent(this, MainActivity::class.java))
-                            finishAffinity()
+                            val userMap = mapOf(
+                                "uid" to userId,
+                                "username" to username,
+                                "email" to email
+                            )
+                            FirebaseDatabase.getInstance().getReference("Users").child(userId)
+                                .setValue(userMap)
+                                .addOnCompleteListener { dbTask ->
+                                    if (dbTask.isSuccessful) {
+                                        Toast.makeText(this, "Registration Successful", Toast.LENGTH_SHORT).show()
+                                        startActivity(Intent(this, MainActivity::class.java))
+                                        finishAffinity()
+                                    }
+                                }
                         } else {
-                            Toast.makeText(this, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this, "Registration Failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
             } else {
@@ -54,7 +59,7 @@ class RegisterActivity : AppCompatActivity() {
             }
         }
 
-        tvLoginRedirect.setOnClickListener {
+        tvGoToLogin.setOnClickListener {
             finish()
         }
     }
