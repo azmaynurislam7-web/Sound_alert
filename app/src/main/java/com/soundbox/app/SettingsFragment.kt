@@ -29,7 +29,7 @@ class SettingsFragment : Fragment() {
 
         // Display current logged in user email
         val currentUserEmail = auth.currentUser?.email ?: "No Email"
-        tvUserEmail.text = currentUserEmail
+        tvUserEmail?.text = currentUserEmail
 
         // Reference to user settings in Firebase
         val userSettingsRef = currentUserId?.let {
@@ -47,7 +47,7 @@ class SettingsFragment : Fragment() {
         }
 
         // Logout action
-        btnLogout.setOnClickListener {
+        btnLogout?.setOnClickListener {
             auth.signOut()
             val intent = Intent(requireContext(), LoginActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
