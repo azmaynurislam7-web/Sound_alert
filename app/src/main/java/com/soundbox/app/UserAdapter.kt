@@ -7,28 +7,29 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class UserAdapter(
-    private val userList: List<User>,
-    private val onUserClick: (User) -> Unit
+    private val users: List<User>,
+    private val onClick: (User) -> Unit
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
     class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvUserEmail: TextView = itemView.findViewById(R.id.tvUserEmailItem)
+        val tvUsername: TextView = itemView.findViewById(R.id.tvUsername)
+        val tvUserBio: TextView = itemView.findViewById(R.id.tvUserBio)
+        val tvUserInitial: TextView = itemView.findViewById(R.id.tvUserInitial)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_user, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_user, parent, false)
         return UserViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        val user = userList[position]
-        holder.tvUserEmail.text = user.email
+        val user = users[position]
+        holder.tvUsername.text = user.username
+        holder.tvUserBio.text = if (user.bio.isNotEmpty()) user.bio else "Hey there! I am using Chat Wave."
+        holder.tvUserInitial.text = if (user.username.isNotEmpty()) user.username.take(1).uppercase() else "U"
 
-        holder.itemView.setOnClickListener {
-            onUserClick(user)
-        }
+        holder.itemView.setOnClickListener { onClick(user) }
     }
 
-    override fun getItemCount(): Int = userList.size
+    override fun getItemCount(): Int = users.size
 }
