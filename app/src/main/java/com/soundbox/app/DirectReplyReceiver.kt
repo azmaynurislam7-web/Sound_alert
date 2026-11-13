@@ -16,10 +16,11 @@ class DirectReplyReceiver : BroadcastReceiver() {
             val currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
             if (!replyText.isNullOrEmpty() && !receiverId.isNullOrEmpty() && currentUserId != null) {
+                // Curly braces {} lagane se Kotlin ab underscore ko variable ka part nahi manega
                 val chatId = if (currentUserId < receiverId) {
-                    "$currentUserId_$receiverId"
+                    "${currentUserId}_$receiverId"
                 } else {
-                    "$receiverId_$currentUserId"
+                    "${receiverId}_$currentUserId"
                 }
 
                 val messageMap = mapOf(
