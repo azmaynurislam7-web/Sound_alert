@@ -2,113 +2,172 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark">
+    android:background="#FFFFFF">
 
-    <!-- Top Curved / Gradient Background Header -->
-    <ImageView
+    <!-- Top Orange/Red Gradient Wave Header -->
+    <View
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/bg_telegram_nav"
-        android:rotation="180"
-        android:alpha="0.8" />
+        android:layout_height="220dp"
+        android:background="@drawable/bg_login_top_wave" />
 
-    <LinearLayout
+    <!-- Bottom Blue Gradient Wave -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_login_bottom_wave" />
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="24dp">
+        android:fillViewport="true">
 
-        <!-- App Branding: CW & Chat Wave -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="CW"
-            android:textSize="36sp"
-            android:textStyle="bold"
-            android:textColor="@color/text_white"
-            android:letterSpacing="0.1" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
-            android:text="Chat Wave"
-            android:textSize="14sp"
-            android:textColor="@color/primary_accent"
-            android:textStyle="bold"
-            android:letterSpacing="0.2" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:text="Login"
-            android:textColor="@color/text_white"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <!-- Input Card Container -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_telegram_nav"
-            android:backgroundTint="@color/card_dark"
+            android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="20sp">
+            android:paddingHorizontal="24dp"
+            android:paddingTop="50dp"
+            android:paddingBottom="40dp">
 
-            <!-- Email / Username Input -->
-            <EditText
-                android:id="@+id/etEmail"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginBottom="16dp"
-                android:background="@android:color/transparent"
-                android:hint="Email or Username"
-                android:inputType="textEmailAddress"
-                android:paddingHorizontal="12dp"
-                android:textColor="@color/text_white"
-                android:textColorHint="@color/text_gray"
-                android:textSize="15sp" />
+            <!-- App Branding: CW & Chat Wave -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CW"
+                android:textColor="#222222"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.1" />
 
-            <!-- Password Input -->
-            <EditText
-                android:id="@+id/etPassword"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="40dp"
+                android:text="Chat Wave"
+                android:textColor="#00C853"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:letterSpacing="0.15" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="28dp"
+                android:text="Login"
+                android:textColor="#333333"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <!-- Card Container for Inputs -->
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:background="@android:color/transparent"
-                android:hint="********"
-                android:inputType="textPassword"
-                android:paddingHorizontal="12dp"
-                android:textColor="@color/text_white"
-                android:textColorHint="@color/text_gray"
-                android:textSize="15sp" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:background="@drawable/bg_white_card"
+                android:elevation="6dp"
+                android:padding="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toStartOf="@id/btnLoginAction"
+                    android:layout_marginEnd="12dp"
+                    android:orientation="vertical">
+
+                    <EditText
+                        android:id="@+id/etEmail"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="@android:color/transparent"
+                        android:hint="Username or Email"
+                        android:inputType="textEmailAddress"
+                        android:textColor="#222222"
+                        android:textColorHint="#AAAAAA"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="12dp"
+                        android:background="#F0F0F0" />
+
+                    <EditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:background="@android:color/transparent"
+                        android:hint="Password"
+                        android:inputType="textPassword"
+                        android:textColor="#222222"
+                        android:textColorHint="#AAAAAA"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <!-- Floating Circular Action Button (Arrow) -->
+                <FrameLayout
+                    android:id="@+id/btnLoginAction"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
+                    android:background="@drawable/bg_circle_green">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:rotation="180"
+                        android:src="@android:drawable/ic_menu_send"
+                        app:tint="#FFFFFF" />
+                </FrameLayout>
+            </RelativeLayout>
+
+            <!-- Hidden standard button to avoid code crashes, matched with click listener -->
+            <Button
+                android:id="@+id/btnLogin"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:backgroundTint="#00C853"
+                android:text="Login"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textAllCaps="false" />
+
+            <!-- Bottom Links -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvGoToRegister"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Register"
+                    android:textColor="#FF5722"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <TextView
+                    android:id="@+id/tvForgot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Forgot ?"
+                    android:textColor="#888888"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
         </LinearLayout>
-
-        <!-- Login Button Action -->
-        <Button
-            android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginTop="24dp"
-            android:backgroundTint="@color/primary_accent"
-            android:text="Login"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            android:textAllCaps="false" />
-
-        <!-- Switch to Register -->
-        <TextView
-            android:id="@+id/tvGoToRegister"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="Don't have an account? Register"
-            android:textColor="@color/text_gray"
-            android:textSize="14sp" />
-
-    </LinearLayout>
+    </ScrollView>
 
 </RelativeLayout>
