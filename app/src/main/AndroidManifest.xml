@@ -58,6 +58,20 @@
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
+        <!-- Firebase Cloud Messaging Service for Background & Locked State Notifications -->
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
+        <!-- BroadcastReceiver for WhatsApp-like Direct Reply from Notification -->
+        <receiver 
+            android:name=".DirectReplyReceiver" 
+            android:exported="false" />
+
     </application>
 
 </manifest>
